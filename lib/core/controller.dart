@@ -203,6 +203,22 @@ class CoreController {
     return _interface.stopListener();
   }
 
+  Future<AdBlockSnapshot> getAdBlockSnapshot() async {
+    return _interface.getAdBlockSnapshot();
+  }
+
+  Future<bool> clearAdBlockEvents() async {
+    return _interface.clearAdBlockEvents();
+  }
+
+  Future<String> normalizeAdBlockDomain(String domain) async {
+    return _interface.normalizeAdBlockDomain(domain);
+  }
+
+  Future<AdBlockMatchResult> matchAdBlockDomain(String domain) async {
+    return _interface.matchAdBlockDomain(domain);
+  }
+
   Future<Delay> getDelay(String url, String proxyName) async {
     final data = await _interface.asyncTestDelay(url, proxyName);
     return Delay.fromJson(json.decode(data));

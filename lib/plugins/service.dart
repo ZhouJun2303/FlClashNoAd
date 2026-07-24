@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 abstract mixin class ServiceListener {
   void onServiceEvent(CoreEvent event) {}
 
+  void onServiceAdBlock(AdBlockEvent event) {}
+
   void onServiceCrash(String message) {}
 }
 
@@ -33,6 +35,19 @@ class Service {
         case 'event':
           final data = call.arguments as String? ?? '';
           final result = ActionResult.fromJson(json.decode(data));
+          final eventData = result.data;
+          if (eventData is Map && eventData['type'] == 'adBlock') {
+            final adBlockData = eventData['data'];
+            if (adBlockData is Map) {
+              final event = AdBlockEvent.fromJson(
+                Map<String, Object?>.from(adBlockData),
+              );
+              for (final listener in _listeners) {
+                listener.onServiceAdBlock(event);
+              }
+            }
+            break;
+          }
           for (final listener in _listeners) {
             listener.onServiceEvent(CoreEvent.fromJson(result.data));
           }
@@ -59,6 +74,25 @@ class Service {
     }
     final dataJson = await data.commonToJSON<dynamic>();
     return ActionResult.fromJson(dataJson);
+  }
+
+  Future<Map<String, dynamic>?> invokeRawAction({
+    required String id,
+    required String method,
+    dynamic data,
+  }) async {
+    final result = await methodChannel.invokeMethod<String>(
+      'invokeAction',
+      json.encode({
+        'id': id,
+        'method': method,
+        'data': data,
+      }),
+    );
+    if (result == null) {
+      return null;
+    }
+    return Map<String, dynamic>.from(await result.commonToJSON<dynamic>());
   }
 
   Future<bool> start() async {

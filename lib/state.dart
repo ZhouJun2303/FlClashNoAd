@@ -83,6 +83,9 @@ class GlobalState {
     final appStateOverrides = buildAppStateOverrides(appState);
     packageInfo = await PackageInfo.fromPlatform();
     final configMap = await preferences.getConfigMap();
+    final adBlockConfigMap =
+        _adBlockConfigMap(configMap) ?? await preferences.getAdBlockConfigMap();
+    final adBlockProps = AdBlockProps.fromJson(adBlockConfigMap);
     final config = await migration.migrationIfNeeded(
       configMap,
       sync: (data) async {
@@ -97,6 +100,9 @@ class GlobalState {
             data.proxyGroups,
           ),
           preferences.saveConfig(config),
+          preferences.saveAdBlockProps(
+            AdBlockProps.fromJson(_adBlockConfigMap(newConfigMap)),
+          ),
         ]);
         return config;
       },
@@ -105,6 +111,7 @@ class GlobalState {
     container = ProviderContainer(
       overrides: [...appStateOverrides, ...configOverrides],
     );
+    container.read(adBlockSettingProvider.notifier).value = adBlockProps;
     final profiles = await database.profilesDao.query().get();
     container.read(profilesProvider.notifier).setAndReorder(profiles);
     await AppLocalizations.load(
@@ -402,4 +409,11 @@ class GlobalState {
   }
 }
 
+Map<String, Object?>? _adBlockConfigMap(Map<String, Object?>? configMap) {
+  final value = configMap?[adBlockConfigKey];
+  if (value is Map) {
+    return Map<String, Object?>.from(value);
+  }
+  return null;
+}
 final globalState = GlobalState();

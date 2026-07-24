@@ -159,6 +159,8 @@ class SetupAction extends _$SetupAction {
     _updateTimer?.cancel();
     _updateTimer = null;
     await coreController.stopListener();
+    await coreController.clearAdBlockEvents();
+    ref.read(adBlockSnapshotProvider.notifier).clear();
   }
 
   Future<void> initStatus() async {
@@ -315,6 +317,12 @@ class SetupAction extends _$SetupAction {
       rawConfig = await handleEvaluate(scriptContent!, rawConfig);
     }
     final directory = await appPath.profilesPath;
+    rawConfig = withAdBlockInjectionConfig(
+      rawConfig: rawConfig,
+      props: ref.read(adBlockSettingProvider),
+      remoteRulePath: getAdBlockRemoteRulePath(directory),
+      logicalMode: realPatchConfig.mode,
+    );
     final res = makeRealProfileTask(
       MakeRealProfileState(
         rules: rules,
@@ -433,6 +441,7 @@ class BackupAction extends _$BackupAction {
     final scriptFileNames = res[1];
     final configMap = ref.read(configProvider).toJson();
     configMap['version'] = await preferences.getVersion();
+    configMap[adBlockConfigKey] = ref.read(adBlockSettingProvider).toJson();
     return backupTask(configMap, [...profileFileNames, ...scriptFileNames]);
   }
 
@@ -459,6 +468,11 @@ class BackupAction extends _$BackupAction {
       final configMap = migrationData.configMap;
       if (option == RestoreOption.onlyProfiles || configMap == null) return;
       final config = Config.fromJson(configMap);
+      ref.read(adBlockSettingProvider.notifier).value = AdBlockProps.fromJson(
+        configMap[adBlockConfigKey] is Map
+            ? Map<String, Object?>.from(configMap[adBlockConfigKey] as Map)
+            : null,
+      );
       ref.read(patchClashConfigProvider.notifier).value =
           config.patchClashConfig;
       ref.read(appSettingProvider.notifier).value = config.appSettingProps;
@@ -510,6 +524,9 @@ class CoreAction extends _$CoreAction {
       return;
     }
     ref.read(coreStatusProvider.notifier).value = CoreStatus.connected;
+    ref
+        .read(adBlockSnapshotProvider.notifier)
+        .replace(await coreController.getAdBlockSnapshot());
   }
 
   Future<Result<bool>> requestAdmin(bool enableTun) async {
@@ -599,7 +616,10 @@ class SystemAction extends _$SystemAction {
     }
     if (ref.read(appSettingProvider).minimizeOnExit || !exit) {
       if (system.isDesktop) {
-        await preferences.saveConfig(ref.read(configProvider));
+        await Future.wait([
+          preferences.saveConfig(ref.read(configProvider)),
+          preferences.saveAdBlockProps(ref.read(adBlockSettingProvider)),
+        ]);
       }
       await system.back();
     } else {
@@ -682,7 +702,10 @@ class StoreAction extends _$StoreAction {
 
   void savePreferencesDebounce() {
     debouncer.call(FunctionTag.savePreferences, () async {
-      await preferences.saveConfig(ref.read(configProvider));
+      await Future.wait([
+        preferences.saveConfig(ref.read(configProvider)),
+        preferences.saveAdBlockProps(ref.read(adBlockSettingProvider)),
+      ]);
     });
   }
 

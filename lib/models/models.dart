@@ -1,3 +1,4 @@
+export 'ad_block.dart';
 export 'app.dart';
 export 'clash_config.dart';
 export 'common.dart';

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:fl_clash/models/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'ad_block.dart';
 import 'constant.dart';
 
 class Preferences {
@@ -51,6 +52,18 @@ class Preferences {
     }
   }
 
+  Future<Map<String, Object?>?> getAdBlockConfigMap() async {
+    try {
+      final preferences = await sharedPreferencesCompleter.future;
+      final configString = preferences?.getString(adBlockConfigKey);
+      if (configString == null) return null;
+      final Map<String, Object?>? configMap = json.decode(configString);
+      return configMap;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<Map<String, Object?>?> getClashConfigMap() async {
     try {
       final preferences = await sharedPreferencesCompleter.future;
@@ -83,6 +96,12 @@ class Preferences {
   Future<bool> saveConfig(Config config) async {
     final preferences = await sharedPreferencesCompleter.future;
     return preferences?.setString(configKey, json.encode(config)) ?? false;
+  }
+
+  Future<bool> saveAdBlockProps(AdBlockProps props) async {
+    final preferences = await sharedPreferencesCompleter.future;
+    return preferences?.setString(adBlockConfigKey, json.encode(props)) ??
+        false;
   }
 
   Future<void> clearPreferences() async {

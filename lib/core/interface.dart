@@ -6,7 +6,21 @@ import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 
 mixin CoreInterface {
+  Future<T?> invokeRaw<T>({
+    required String method,
+    dynamic data,
+    Duration? timeout,
+  });
+
   Future<bool> init(InitParams params);
+
+  Future<AdBlockSnapshot> getAdBlockSnapshot();
+
+  Future<bool> clearAdBlockEvents();
+
+  Future<String> normalizeAdBlockDomain(String domain);
+
+  Future<AdBlockMatchResult> matchAdBlockDomain(String domain);
 
   Future<String> preload();
 
@@ -106,8 +120,41 @@ abstract class CoreHandlerInterface with CoreInterface {
     );
   }
 
+  Future<T?> _invokeRaw<T>({
+    required String method,
+    dynamic data,
+    Duration? timeout,
+  }) async {
+    try {
+      await completer.future.timeout(const Duration(seconds: 10));
+    } catch (e) {
+      commonPrint.log(
+        'Invoke pre $method timeout $e',
+        logLevel: LogLevel.error,
+      );
+      return null;
+    }
+    return await utils.handleWatch(
+      onStart: () {
+        commonPrint.log('Invoke $method ${DateTime.now()} $data');
+      },
+      function: () async {
+        return invokeRaw<T>(method: method, data: data, timeout: timeout);
+      },
+      onEnd: (data, elapsedMilliseconds) {
+        commonPrint.log('Invoke $method ${elapsedMilliseconds}ms');
+      },
+    );
+  }
   Future<T?> invoke<T>({
     required ActionMethod method,
+    dynamic data,
+    Duration? timeout,
+  });
+
+  @override
+  Future<T?> invokeRaw<T>({
+    required String method,
     dynamic data,
     Duration? timeout,
   });
@@ -117,6 +164,43 @@ abstract class CoreHandlerInterface with CoreInterface {
       ActionMethod.getConfig => result.toResult as T,
       _ => result.data as T,
     };
+  }
+
+  @override
+  Future<AdBlockSnapshot> getAdBlockSnapshot() async {
+    final data = await _invokeRaw<Object?>(
+      method: 'getAdBlockSnapshot',
+    );
+    if (data is! Map) {
+      return const AdBlockSnapshot();
+    }
+    return AdBlockSnapshot.fromJson(Map<String, Object?>.from(data));
+  }
+
+  @override
+  Future<bool> clearAdBlockEvents() async {
+    return await _invokeRaw<bool>(method: 'clearAdBlockEvents') ?? false;
+  }
+
+  @override
+  Future<String> normalizeAdBlockDomain(String domain) async {
+    return await _invokeRaw<String>(
+          method: 'normalizeAdBlockDomain',
+          data: domain,
+        ) ??
+        '';
+  }
+
+  @override
+  Future<AdBlockMatchResult> matchAdBlockDomain(String domain) async {
+    final data = await _invokeRaw<Object?>(
+      method: 'matchAdBlockDomain',
+      data: domain,
+    );
+    if (data is! Map) {
+      return const AdBlockMatchResult(matched: false);
+    }
+    return AdBlockMatchResult.fromJson(Map<String, Object?>.from(data));
   }
 
   @override

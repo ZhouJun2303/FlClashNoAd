@@ -82,6 +82,12 @@ class _CoreContainerState extends ConsumerState<CoreManager>
   }
 
   @override
+  void onAdBlock(AdBlockEvent event) {
+    ref.read(adBlockSnapshotProvider.notifier).addEvent(event);
+    super.onAdBlock(event);
+  }
+
+  @override
   void onRequest(TrackerInfo trackerInfo) async {
     ref.read(requestsProvider.notifier).addRequest(trackerInfo);
     super.onRequest(trackerInfo);

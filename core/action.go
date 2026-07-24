@@ -187,6 +187,20 @@ func handleAction(action *Action, result ActionResult) {
 		path := action.Data.(string)
 		handleDelFile(path, result)
 		return
+	case getAdBlockSnapshotMethod:
+		result.success(handleGetAdBlockSnapshot())
+		return
+	case clearAdBlockEventsMethod:
+		result.success(handleClearAdBlockEvents())
+		return
+	case normalizeAdBlockDomainMethod:
+		domain := action.Data.(string)
+		result.success(handleNormalizeAdBlockDomain(domain))
+		return
+	case matchAdBlockDomainMethod:
+		domain := action.Data.(string)
+		result.success(handleMatchAdBlockDomain(domain))
+		return
 	default:
 		nextHandle(action, result)
 	}

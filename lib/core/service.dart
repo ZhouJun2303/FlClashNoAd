@@ -5,10 +5,17 @@ import 'dart:io';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/core.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/models/core.dart';
+import 'package:fl_clash/models/models.dart';
 
 import 'interface.dart';
 import 'transport.dart';
+
+const _rawCoreMethods = {
+  'getAdBlockSnapshot',
+  'clearAdBlockEvents',
+  'normalizeAdBlockDomain',
+  'matchAdBlockDomain',
+};
 
 class CoreService extends CoreHandlerInterface {
   static CoreService? _instance;
@@ -36,8 +43,9 @@ class CoreService extends CoreHandlerInterface {
   Future<void> handleResult(ActionResult result) async {
     final completer = _callbackCompleterMap[result.id];
     final data = await parasResult(result);
-    if (result.id?.isEmpty == true) {
-      coreEventManager.sendEvent(CoreEvent.fromJson(result.data));
+    if (result.method == ActionMethod.message || result.id?.isEmpty == true) {
+      handleCoreEventData(result.data);
+      return;
     }
     if (completer?.isCompleted == true) {
       return;
@@ -62,6 +70,10 @@ class CoreService extends CoreHandlerInterface {
           (data) async {
             try {
               final dataJson = await data.trim().commonToJSON<dynamic>();
+              if (dataJson is Map<String, dynamic> &&
+                  handleRawResult(dataJson)) {
+                return;
+              }
               handleResult(ActionResult.fromJson(dataJson));
             } catch (e) {
               commonPrint.log(
@@ -77,6 +89,34 @@ class CoreService extends CoreHandlerInterface {
             );
           },
         );
+  }
+
+  void handleCoreEventData(dynamic data) {
+    if (data is Map && data['type'] == 'adBlock') {
+      final eventData = data['data'];
+      if (eventData is Map) {
+        coreEventManager.sendAdBlockEvent(
+          AdBlockEvent.fromJson(Map<String, Object?>.from(eventData)),
+        );
+      }
+      return;
+    }
+    coreEventManager.sendEvent(CoreEvent.fromJson(data));
+  }
+
+  bool handleRawResult(Map<String, dynamic> dataJson) {
+    final method = dataJson['method'];
+    if (!_rawCoreMethods.contains(method)) {
+      return false;
+    }
+    final id = dataJson['id'] as String?;
+    final completer = _callbackCompleterMap[id];
+    if (completer?.isCompleted == true) {
+      return true;
+    }
+    completer?.complete(dataJson['data']);
+    _callbackCompleterMap.remove(id);
+    return true;
   }
 
   void _handleInvokeCrashEvent() {
@@ -155,6 +195,27 @@ class CoreService extends CoreHandlerInterface {
   Future<String> preload() async {
     await start();
     return '';
+  }
+
+  @override
+  Future<T?> invokeRaw<T>({
+    required String method,
+    dynamic data,
+    Duration? timeout,
+  }) async {
+    final id = '$method#${utils.id}';
+    _callbackCompleterMap[id] = Completer<T?>();
+    sendMessage(json.encode({'id': id, 'method': method, 'data': data}));
+    return (_callbackCompleterMap[id] as Completer<T?>).future.withTimeout(
+      timeout: timeout,
+      onLast: () {
+        final completer = _callbackCompleterMap[id];
+        completer?.safeCompleter(null);
+        _callbackCompleterMap.remove(id);
+      },
+      tag: id,
+      onTimeout: () => null,
+    );
   }
 
   @override

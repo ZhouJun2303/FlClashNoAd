@@ -107,6 +107,10 @@ const (
 	setupConfigMethod              Method = "setupConfig"
 	getConfigMethod                Method = "getConfig"
 	deleteFile                     Method = "deleteFile"
+	getAdBlockSnapshotMethod       Method = "getAdBlockSnapshot"
+	clearAdBlockEventsMethod       Method = "clearAdBlockEvents"
+	normalizeAdBlockDomainMethod   Method = "normalizeAdBlockDomain"
+	matchAdBlockDomainMethod       Method = "matchAdBlockDomain"
 )
 
 type Method string
@@ -130,6 +134,7 @@ const (
 	RequestMessage   MessageType = "request"
 	LoadedMessage    MessageType = "loaded"
 	GeoUpdateMessage MessageType = "geoUpdate"
+	AdBlockMessage   MessageType = "adBlock"
 )
 
 type GeoUpdateStatus struct {

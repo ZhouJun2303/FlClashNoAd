@@ -38,6 +38,13 @@ class _AppStateManagerState extends ConsumerState<AppStateManager>
             .savePreferencesDebounce();
       }
     });
+    ref.listenManual(adBlockSettingProvider, (prev, next) {
+      if (prev != next) {
+        globalState.container
+            .read(storeActionProvider.notifier)
+            .savePreferencesDebounce();
+      }
+    });
     ref.listenManual(needUpdateGroupsProvider, (prev, next) {
       if (prev != next) {
         globalState.container

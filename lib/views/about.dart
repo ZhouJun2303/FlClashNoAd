@@ -166,6 +166,25 @@ class AboutView extends StatelessWidget {
       ),
       const SizedBox(height: 12),
       ..._buildContributorsSection(appLocalizations),
+      ...generateSection(
+        separated: false,
+        title: 'NoAd',
+        items: [
+          const ListItem(
+            title: Text('Based on FLClash v0.8.94'),
+            subtitle: Text(
+              'NoAd modifies FLClash under GPL-3.0 and adds Android ad-domain blocking with anti-AD rules.',
+            ),
+          ),
+          ListItem(
+            title: const Text('Upstream FLClash'),
+            onTap: () {
+              globalState.openUrl('https://github.com/chen08209/FlClash');
+            },
+            trailing: const Icon(Icons.launch),
+          ),
+        ],
+      ),
       ..._buildMoreSection(context),
     ];
     return BaseScaffold(

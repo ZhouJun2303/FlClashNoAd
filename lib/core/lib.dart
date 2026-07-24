@@ -66,6 +66,22 @@ class CoreLib extends CoreHandlerInterface {
   }
 
   @override
+  Future<T?> invokeRaw<T>({
+    required String method,
+    dynamic data,
+    Duration? timeout,
+  }) async {
+    final id = '$method#${utils.id}';
+    final result = await service
+        ?.invokeRawAction(id: id, method: method, data: data)
+        .withTimeout(onTimeout: () => null);
+    if (result == null) {
+      return null;
+    }
+    return result['data'] as T?;
+  }
+
+  @override
   Future<T?> invoke<T>({
     required ActionMethod method,
     dynamic data,

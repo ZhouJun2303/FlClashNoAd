@@ -11,6 +11,8 @@ abstract mixin class CoreEventListener {
 
   void onRequest(TrackerInfo connection) {}
 
+  void onAdBlock(AdBlockEvent event) {}
+
   void onLoaded(String providerName) {}
 
   void onCrash(String message) {}
@@ -70,6 +72,12 @@ class CoreEventManager {
 
   void sendEvent(CoreEvent event) {
     _controller.add(event);
+  }
+
+  void sendAdBlockEvent(AdBlockEvent event) {
+    for (final CoreEventListener listener in _listeners) {
+      listener.onAdBlock(event);
+    }
   }
 
   void addListener(CoreEventListener listener) {

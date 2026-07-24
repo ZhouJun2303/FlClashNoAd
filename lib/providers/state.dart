@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'ad_block.dart';
 import 'app.dart';
 import 'config.dart';
 import 'database.dart';
@@ -81,14 +82,17 @@ UpdateParams updateParams(Ref ref) {
   final routeMode = ref.watch(
     networkSettingProvider.select((state) => state.routeMode),
   );
+  final adBlockProps = ref.watch(adBlockSettingProvider);
   return ref.watch(
     patchClashConfigProvider.select(
       (state) => UpdateParams(
         tun: state.tun.getRealTun(routeMode),
         allowLan: state.allowLan,
         findProcessMode: state.findProcessMode,
-        mode: state.mode,
-        logLevel: state.logLevel,
+        mode: adBlockProps.enabled ? Mode.rule : state.mode,
+        logLevel: adBlockProps.enabled && adBlockProps.detailedLog
+            ? LogLevel.debug
+            : state.logLevel,
         ipv6: state.ipv6,
         tcpConcurrent: state.tcpConcurrent,
         externalController: state.externalController,

@@ -80,6 +80,7 @@ func handleForceGC() {
 }
 
 func handleShutdown() bool {
+	handleClearAdBlockEvents()
 	stopListeners()
 	executor.Shutdown()
 	handleForceGC()
@@ -547,6 +548,12 @@ func init() {
 			Type: RequestMessage,
 			Data: c,
 		})
+		if event, ok := recordAdBlockEvent(c); ok {
+			sendMessage(Message{
+				Type: AdBlockMessage,
+				Data: *event,
+			})
+		}
 	}
 	executor.DefaultProviderLoadedHook = func(providerName string) {
 		sendMessage(Message{

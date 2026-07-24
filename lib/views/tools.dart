@@ -11,6 +11,7 @@ import 'package:fl_clash/views/application_setting.dart';
 import 'package:fl_clash/views/backup_and_restore.dart';
 import 'package:fl_clash/views/config/config.dart';
 import 'package:fl_clash/views/hotkey.dart';
+import 'package:fl_clash/views/no_ad.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,6 +79,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         if (system.isDesktop) const _HotkeyItem(),
         if (system.isWindows) const _LoopbackItem(),
         if (system.isAndroid) const _AccessItem(),
+        if (system.isAndroid) const _NoAdItem(),
         const _ConfigItem(),
         const _AdvancedConfigItem(),
         const _SettingItem(),
@@ -227,6 +229,20 @@ class _AccessItem extends StatelessWidget {
       title: Text(context.appLocalizations.accessControl),
       subtitle: Text(context.appLocalizations.accessControlDesc),
       delegate: const OpenDelegate(widget: AccessView()),
+    );
+  }
+}
+
+class _NoAdItem extends StatelessWidget {
+  const _NoAdItem();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      leading: const Icon(Icons.block),
+      title: const Text('NoAd'),
+      subtitle: const Text('Ad blocking, blocked events, and rule controls'),
+      delegate: const OpenDelegate(widget: NoAdView()),
     );
   }
 }

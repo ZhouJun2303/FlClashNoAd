@@ -54,6 +54,12 @@ class _AndroidContainerState extends ConsumerState<AndroidManager>
   }
 
   @override
+  void onServiceAdBlock(AdBlockEvent event) {
+    coreEventManager.sendAdBlockEvent(event);
+    super.onServiceAdBlock(event);
+  }
+
+  @override
   void onServiceCrash(String message) {
     coreEventManager.sendEvent(
       CoreEvent(type: CoreEventType.crash, data: message),
