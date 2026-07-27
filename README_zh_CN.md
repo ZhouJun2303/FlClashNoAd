@@ -4,136 +4,77 @@
 
 </div>
 
-## FlClash
+## NoAd
 
-[![Downloads](https://img.shields.io/github/downloads/chen08209/FlClash/total?style=flat-square&logo=github)](https://github.com/chen08209/FlClash/releases/)[![Last Version](https://img.shields.io/github/release/chen08209/FlClash/all.svg?style=flat-square)](https://github.com/chen08209/FlClash/releases/)[![License](https://img.shields.io/github/license/chen08209/FlClash?style=flat-square)](LICENSE)
+NoAd 是一个基于 [FLClash](https://github.com/chen08209/FlClash) 与 Mihomo 的 Android 首版去广告客户端。它保留 FLClash 的 VPN/TUN 架构，在规则层加入 NoAd 广告与追踪域名拦截能力，无需 Root。
 
-[![Channel](https://img.shields.io/badge/Telegram-Channel-blue?style=flat-square&logo=telegram)](https://t.me/FlClash)
+## 范围
 
-基于ClashMeta的多平台代理客户端，简单易用，开源无广告。
+- 首版面向 Android。
+- 包名：`com.follow.clash.noad`。
+- 深链：`noad://install-config`。
+- 通过 Mihomo rule provider 拦截已知广告与追踪域名。
+- 不安装 CA 证书，不解密 HTTPS。
+- HTTPS 拦截记录只展示域名、目标 IP/端口、网络类型、来源 App、UID 和命中的 NoAd 规则元数据。
+- 不承诺完全消除第一方、原生、服务端插入或同域广告。
 
-on Desktop:
-<p style="text-align: center;">
-    <img alt="desktop" src="snapshots/desktop.gif">
-</p>
+## 功能
 
-on Mobile:
-<p style="text-align: center;">
-    <img alt="mobile" src="snapshots/mobile.gif">
-</p>
+- 内置 anti-AD Mihomo MRS 离线兜底快照。
+- 远程规则源：`https://anti-ad.net/mihomo.mrs`，由 Mihomo provider 周期/手动更新。
+- NoAd 规则在订阅、脚本和自定义覆写之后注入，并位于用户分流规则之前。
+- Global、Direct、Rule 三种逻辑模式都会保持 NoAd 拦截：内部使用规则模式，并以 `MATCH,GLOBAL`、`MATCH,DIRECT` 或用户原始规则收尾。
+- 支持精确域名放行、精确域名阻断、二次确认的后缀阻断，以及 Android App 绕过。
+- 500 条内存拦截日志，Core/VPN 关闭时清空。
+- 脱敏诊断导出和用户确认后的原始 JSONL 导出，均通过系统文件选择器在本机生成。
+- Firebase Analytics/Crashlytics 默认关闭，只有用户明确开启才收集。
 
-## Features
+## 构建
 
-✈️ 多平台: Android, Windows, macOS and Linux
+1. 更新 submodules：
 
-💻 自适应多个屏幕尺寸,多种颜色主题可供选择
-
-💡 基本 Material You 设计, 类[Surfboard](https://github.com/getsurfboard/surfboard)用户界面
-
-☁️ 支持通过WebDAV同步数据
-
-✨ 支持一键导入订阅, 深色模式
-
-## Use
-
-### Linux
-
-⚠️ 使用前请确保安装以下依赖
-
-   ```bash
-    sudo apt-get install libayatana-appindicator3-dev
-    sudo apt-get install libkeybinder-3.0-dev
-   ```
-
-### Android
-
-支持下列操作
-
-   ```bash
-    com.follow.clash.action.START
-    
-    com.follow.clash.action.STOP
-    
-    com.follow.clash.action.TOGGLE
-   ```
-
-## Download
-
-<a href="https://chen08209.github.io/FlClash-fdroid-repo/repo?fingerprint=789D6D32668712EF7672F9E58DEEB15FBD6DCEEC5AE7A4371EA72F2AAE8A12FD"><img alt="Get it on F-Droid" src="snapshots/get-it-on-fdroid.svg" width="200px"/></a> <a href="https://github.com/chen08209/FlClash/releases"><img alt="Get it on GitHub" src="snapshots/get-it-on-github.svg" width="200px"/></a>
-
-### Homebrew
-
-```bash
-brew tap chen08209/tap
-brew install --cask flclash
-```
-
-## Build
-
-1. 更新 submodules
    ```bash
    git submodule update --init --recursive
    ```
 
-2. 安装 `Flutter` 以及 `Golang` 环境
+2. 安装工具链：
 
-3. 构建应用
+   - Flutter 3.44.4
+   - Go 1.26.4
+   - JDK 21
+   - Android SDK platform 36
+   - Android Build Tools 36.0.0
+   - Android NDK 28.2.13676358 / r28c
 
-    - android
+3. 验证仓库：
 
-        1. 安装  `Android SDK` ,  `Android NDK`
+   ```bash
+   flutter pub get
+   dart run build_runner build --delete-conflicting-outputs
+   dart run intl_utils:generate
+   flutter analyze --no-fatal-infos
+   flutter test --reporter expanded
+   ```
 
-        2. 设置 `ANDROID_NDK` 环境变量
+4. 运行 Go core 测试：
 
-        3. 运行构建脚本
+   ```bash
+   cd core
+   go test .
+   ```
 
-           ```bash
-           dart setup.dart android
-           ```
+5. 构建 Android APK：
 
-    - windows
+   ```bash
+   dart setup.dart android --env stable -v
+   ```
 
-        1. 你需要一个windows客户端
+## 发布与验证
 
-        2. 安装 `GCC`，`Inno Setup`
+Release 流程、GitHub Secrets、SHA256/源码包要求，以及需要真机或凭据的外部验收项见 [docs/noad-release.md](docs/noad-release.md)。
 
-        3. 运行构建脚本
+隐私边界见 [docs/noad-privacy-and-security.md](docs/noad-privacy-and-security.md)。许可说明见 [docs/noad-licenses.md](docs/noad-licenses.md)。
 
-           ```bash
-           dart setup.dart windows
-           ```
+## 许可与来源
 
-    - linux
-
-        1. 你需要一个linux客户端
-
-        2. 依赖会由 setup 脚本自动安装，也可以手动安装：
-           ```bash
-           sudo apt-get install -y libayatana-appindicator3-dev libkeybinder-3.0-dev
-           ```
-
-        3. 运行构建脚本
-
-           ```bash
-           dart setup.dart linux
-           ```
-
-    - macOS
-
-        1. 你需要一个macOS客户端
-
-        2. 运行构建脚本
-
-           ```bash
-           dart setup.dart macos
-           ```
-
-## Star
-
-支持开发者的最简单方式是点击页面顶部的星标（⭐）。
-
-<p style="text-align: center;">
-    <a href="https://api.star-history.com/svg?repos=chen08209/FlClash&Date">
-        <img alt="start" width=50% src="https://api.star-history.com/svg?repos=chen08209/FlClash&Date"/>
-    </a>
-</p>
+NoAd 是基于 FLClash 的修改版本，按 GPL-3.0 分发。内置 anti-AD 兜底规则快照遵守 anti-AD 的 MIT 许可，许可文本位于 `assets/data/noad/ANTI_AD_LICENSE.txt`。

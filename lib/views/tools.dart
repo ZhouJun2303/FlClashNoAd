@@ -241,7 +241,7 @@ class _NoAdItem extends StatelessWidget {
     return ListItem.open(
       leading: const Icon(Icons.block),
       title: const Text('NoAd'),
-      subtitle: const Text('Ad blocking, blocked events, and rule controls'),
+      subtitle: Text(context.appLocalizations.noAdToolsDesc),
       delegate: const OpenDelegate(widget: NoAdView()),
     );
   }

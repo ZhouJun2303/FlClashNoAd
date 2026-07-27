@@ -1,22 +1,36 @@
-name: build
+name: noad-android
 
 on:
   push:
     tags:
       - 'v*'
+
+permissions:
+  contents: read
+
 env:
-  IS_STABLE: ${{ !contains(github.ref, '-') }}
   FLUTTER_VERSION: '3.44.4'
+  GO_VERSION: '1.26.4'
+  ANDROID_API: '36'
+  ANDROID_BUILD_TOOLS: '36.0.0'
+  ANDROID_NDK_VERSION: '28.2.13676358'
 
 jobs:
-  test:
-    name: Test
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -28,287 +42,144 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Generate Dart sources
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Generate localizations
+        run: dart run intl_utils:generate
+
+      - name: Check generated sources
+        run: |
+          git diff --exit-code -- \
+            lib/models/generated \
+            lib/providers/generated \
+            lib/database/generated \
+            lib/l10n
+
       - name: Analyze
         run: flutter analyze --no-fatal-infos
 
-      - name: Run tests
+      - name: Run Flutter tests
         run: flutter test --reporter expanded
 
-  build:
-    needs: [ test ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - platform: android
-            os: ubuntu-latest
-          - platform: windows
-            os: Windows-2022
-            arch: amd64
-          - platform: linux
-            os: ubuntu-22.04
-            arch: amd64
-          - platform: macos
-            os: macos-15-intel
-            arch: amd64
-          - platform: macos
-            os: macos-latest
-            arch: arm64
-          - platform: windows
-            os: windows-11-arm
-            arch: arm64
-          - platform: linux
-            os: ubuntu-24.04-arm
-            arch: arm64
+      - name: Run Go tests
+        working-directory: core
+        run: go test .
 
+  build_android:
+    name: Build Android APKs
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
-      - name: Setup rust
-        if: startsWith(matrix.os, 'windows-11-arm')
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri "https://win.rustup.rs/aarch64" -OutFile rustup-init.exe
-          .\rustup-init.exe -y --default-toolchain stable
-          $cargoPath = "$env:USERPROFILE\.cargo\bin"
-          Add-Content $env:GITHUB_PATH $cargoPath
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Setup Android Signing
-        if: startsWith(matrix.platform,'android')
-        run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
-          echo "${{ secrets.SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
-          {
-            echo "keyAlias=${{ secrets.KEY_ALIAS }}"
-            echo "storePassword=${{ secrets.STORE_PASSWORD }}"
-            echo "keyPassword=${{ secrets.KEY_PASSWORD }}"
-          } >> android/local.properties
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
 
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.26.4'
-          cache-dependency-path: |
-            core/go.sum
-
-      - name: Enable git long paths (Windows)
-        if: startsWith(matrix.os, 'windows')
-        run: git config --global core.longpaths true
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: master
+          channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
 
-      - name: Setup Xcode
-        if: startsWith(matrix.platform,'macos')
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android packages
         run: |
-          sudo xcode-select -s /Applications/Xcode_26.3.app || sudo xcode-select -s /Applications/Xcode_26.2.app
-          xcodebuild -version
+          sdkmanager \
+            "platforms;android-${ANDROID_API}" \
+            "build-tools;${ANDROID_BUILD_TOOLS}" \
+            "ndk;${ANDROID_NDK_VERSION}"
+          echo "ANDROID_NDK=$ANDROID_HOME/ndk/${ANDROID_NDK_VERSION}" >> "$GITHUB_ENV"
 
-      - name: Setup NDK
-        if: startsWith(matrix.platform,'android')
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r28c
-          add-to-path: true
-          link-to-sdk: true
-
-      - name: Get Flutter Dependency
+      - name: Configure Android signing and Firebase
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SERVICE_JSON: ${{ secrets.SERVICE_JSON }}
         run: |
-          flutter --version
-          flutter pub get
+          test -n "$KEYSTORE"
+          test -n "$KEY_ALIAS"
+          test -n "$STORE_PASSWORD"
+          test -n "$KEY_PASSWORD"
+          test -n "$SERVICE_JSON"
+          echo "$KEYSTORE" | base64 --decode > android/app/keystore.jks
+          echo "$SERVICE_JSON" | base64 --decode > android/app/google-services.json
+          {
+            echo "keyAlias=$KEY_ALIAS"
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyPassword=$KEY_PASSWORD"
+          } >> android/local.properties
 
-      - name: Setup
-        run: dart setup.dart ${{ matrix.platform }} ${{ env.IS_STABLE == 'true' && '--env stable' || '' }} -v
+      - name: Install dependencies
+        run: flutter pub get
 
-      - name: Upload
+      - name: Build Android release
+        run: dart setup.dart android --env stable -v
+
+      - name: Upload Android APKs
         uses: actions/upload-artifact@v4
         with:
-          name: artifact-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) }}
-          path: ./dist
-          overwrite: true
+          name: noad-android-apks
+          path: dist/*.apk
+          if-no-files-found: error
 
-  changelog:
-    if: ${{ !contains(github.ref, '-') }}
+  release:
+    name: Publish GitHub Release
+    needs: build_android
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-    runs-on: ubuntu-latest
-    needs: [ build ]
+    timeout-minutes: 20
     steps:
-      - name: Checkout
+      - name: Checkout source with submodules
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: refs/heads/main
-      - name: Generate
-        run: |
-          last_ver=$(grep -m1 '^## ' CHANGELOG.md 2>/dev/null | sed 's/^## //')
-          
-          tags=($(git tag --merged HEAD --sort=-creatordate))
-          
-          temp="NEW_CHANGELOG.md" > "$temp"
-          
-          for i in "${!tags[@]}"; do
-              curr="${tags[i]}"
-              [[ "$curr" == "$last_ver" ]] && break
-          
-              prev="${tags[i+1]}"
-              range="${prev:+$prev..}$curr"
-          
-              echo -e "## $curr\n" >> "$temp"
-              git log --no-merges --pretty=format:"%B" "$range" | \
-              awk '!/Update changelog/ && NF {print "- " $0 "\n"}' >> "$temp"
-          done
-          [ -f CHANGELOG.md ] && cat CHANGELOG.md >> "$temp"
-          
-          mv "$temp" CHANGELOG.md
-
-      - name: Commit
-        run: |
-          git add CHANGELOG.md
-          if ! git diff --cached --quiet; then
-            echo "Commit pushing"
-            git config --local user.email "chen08209@gmail.com"
-            git config --local user.name "chen08209"
-            git commit -m "Update changelog"
-            if git push; then
-              echo "Push succeeded"
-            else
-              echo "Push failed"
-              exit 1
-            fi
-          fi
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  upload:
-    permissions:
-      contents: write
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    services:
-      telegram-bot-api:
-        image: aiogram/telegram-bot-api:latest
-        env:
-          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-        ports:
-          - 8081:8081
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
+          submodules: recursive
           fetch-depth: 0
 
-      - name: Download
+      - name: Download APK artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./dist/
-          pattern: artifact-*
-          merge-multiple: true
+          name: noad-android-apks
+          path: dist
 
-      - name: Generate release.md
+      - name: Prepare release assets
         run: |
-          tags=($(git tag --merged HEAD --sort=-creatordate))
-          preTag=$(curl -s "https://api.github.com/repos/chen08209/FlClash/releases/latest" | \
-          sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p')
-          
-          [ -z "$preTag" ] && preTag=""
-          
-          out="release.md" > "$out"
-          
-          for i in "${!tags[@]}"; do
-            curr="${tags[i]}"
-            [[ "$curr" == "$preTag" ]] && break
-          
-            prev="${tags[i+1]}"
-            range="${prev:+$prev..}$curr"
-          
-            git log --no-merges --pretty=format:"%B" "$range" | \
-            awk '!/Update changelog/ && NF {print "- " $0 "\n"}' >> "$out"
-          done
-      - name: Push to telegram
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TAG: ${{ github.ref_name }}
-          RUN_ID: ${{ github.run_id }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-          python release_telegram.py
-
-      - name: Patch release.md
-        run: |
-          version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
-          sed "s|VERSION|$version|g" ./.github/release_template.md >> release.md
-
-      - name: Generate sha256
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          cd ./dist
-          sha256sum ./* > SHA256SUMS
+          version="${GITHUB_REF_NAME#v}"
+          mkdir -p dist
+          tar \
+            --exclude='.git' \
+            --exclude='.dart_tool' \
+            --exclude='.gradle' \
+            --exclude='build' \
+            --exclude='dist' \
+            -czf "dist/NoAd-${version}-source.tar.gz" .
+          (cd dist && sha256sum ./* > SHA256SUMS)
+          sed \
+            -e "s|VERSION|${version}|g" \
+            -e "s|REPOSITORY|${GITHUB_REPOSITORY}|g" \
+            .github/release_template.md > release.md
 
       - name: Release
-        if: ${{ env.IS_STABLE == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          files: ./dist/*
-          body_path: './release.md'
-
-      - name: Create Homebrew Cask Source Dir
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
-          arm_sha=$(sha256sum "./dist/FlClash-${version}-macos-arm64.dmg" | awk '{print $1}')
-          amd_sha=$(sha256sum "./dist/FlClash-${version}-macos-amd64.dmg" | awk '{print $1}')
-
-          mkdir -p ./brew/Casks
-          sed \
-            -e "s|VERSION|$version|g" \
-            -e "s|ARM_SHA256|$arm_sha|g" \
-            -e "s|AMD_SHA256|$amd_sha|g" \
-            ./.github/homebrew_cask_template.rb > ./brew/Casks/flclash.rb
-
-      - name: Push to Homebrew tap
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: cpina/github-action-push-to-another-repository@v1.7.2
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.HOMEBREW_SSH_DEPLOY_KEY }}
-        with:
-          source-directory: ./brew/
-          destination-github-username: chen08209
-          destination-repository-name: homebrew-tap
-          user-name: 'chen08029'
-          user-email: 'chen08209@gmail.com'
-          target-branch: main
-          commit-message: Update Homebrew cask from ${{ github.ref_name }}
-          target-directory: /
-
-      - name: Create Fdroid Source Dir
-        if: ${{ env.IS_STABLE == 'true' }}
-        run: |
-          mkdir -p ./tmp
-          cp ./dist/*android-arm64-v8a* ./tmp/ || true
-          echo "Files copied successfully"
-
-      - name: Push to fdroid repo
-        if: ${{ env.IS_STABLE == 'true' }}
-        uses: cpina/github-action-push-to-another-repository@v1.7.2
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-        with:
-          source-directory: ./tmp/
-          destination-github-username: chen08209
-          destination-repository-name: FlClash-fdroid-repo
-          user-name: 'chen08029'
-          user-email: 'chen08209@gmail.com'
-          target-branch: main
-          commit-message: Update from ${{ github.ref_name }}
-          target-directory: /tmp/
+          files: dist/*
+          body_path: release.md

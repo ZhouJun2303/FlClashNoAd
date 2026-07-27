@@ -57,6 +57,7 @@ mixin CoreInterface {
   Future<String> sideLoadExternalProvider({
     required String providerName,
     required String data,
+    String? dataBase64,
   });
 
   Future<String> updateExternalProvider(String providerName);
@@ -146,6 +147,7 @@ abstract class CoreHandlerInterface with CoreInterface {
       },
     );
   }
+
   Future<T?> invoke<T>({
     required ActionMethod method,
     dynamic data,
@@ -168,9 +170,7 @@ abstract class CoreHandlerInterface with CoreInterface {
 
   @override
   Future<AdBlockSnapshot> getAdBlockSnapshot() async {
-    final data = await _invokeRaw<Object?>(
-      method: 'getAdBlockSnapshot',
-    );
+    final data = await _invokeRaw<Object?>(method: 'getAdBlockSnapshot');
     if (data is! Map) {
       return const AdBlockSnapshot();
     }
@@ -310,10 +310,15 @@ abstract class CoreHandlerInterface with CoreInterface {
   Future<String> sideLoadExternalProvider({
     required String providerName,
     required String data,
+    String? dataBase64,
   }) async {
     return await _invoke<String>(
           method: ActionMethod.sideLoadExternalProvider,
-          data: json.encode({'providerName': providerName, 'data': data}),
+          data: json.encode({
+            'providerName': providerName,
+            'data': data,
+            if (dataBase64 != null) 'dataBase64': dataBase64,
+          }),
         ) ??
         '';
   }

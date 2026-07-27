@@ -588,6 +588,154 @@ class MessageLookup extends MessageLookupByLibrary {
     "networkSpeed": MessageLookupByLibrary.simpleMessage("Network speed"),
     "networkType": MessageLookupByLibrary.simpleMessage("Network type"),
     "neutralScheme": MessageLookupByLibrary.simpleMessage("Neutral"),
+    "noAdAboutSourceDesc": MessageLookupByLibrary.simpleMessage(
+      "NoAd modifies FLClash under GPL-3.0 and adds Android ad-domain blocking with anti-AD rules.",
+    ),
+    "noAdAboutSourceTitle": MessageLookupByLibrary.simpleMessage(
+      "Based on FLClash v0.8.94",
+    ),
+    "noAdAdBlocking": MessageLookupByLibrary.simpleMessage("Ad blocking"),
+    "noAdAdBlockingDesc": MessageLookupByLibrary.simpleMessage(
+      "Blocks known ad and tracking domains through the VPN/TUN rule layer.",
+    ),
+    "noAdAllowDomain": MessageLookupByLibrary.simpleMessage("Allow domain"),
+    "noAdAllowExactDomain": MessageLookupByLibrary.simpleMessage(
+      "Allow exact domain",
+    ),
+    "noAdAllowedExactDomains": MessageLookupByLibrary.simpleMessage(
+      "Allowed exact domains",
+    ),
+    "noAdBlockDomain": MessageLookupByLibrary.simpleMessage("Block domain"),
+    "noAdBlockDomainSuffix": MessageLookupByLibrary.simpleMessage(
+      "Block domain suffix",
+    ),
+    "noAdBlockExactDomain": MessageLookupByLibrary.simpleMessage(
+      "Block exact domain",
+    ),
+    "noAdBlockSuffix": MessageLookupByLibrary.simpleMessage("Block suffix"),
+    "noAdBlocked": MessageLookupByLibrary.simpleMessage("Blocked"),
+    "noAdBlockedDomainSuffixes": MessageLookupByLibrary.simpleMessage(
+      "Blocked domain suffixes",
+    ),
+    "noAdBlockedEvents": MessageLookupByLibrary.simpleMessage("Blocked events"),
+    "noAdBlockedExactDomains": MessageLookupByLibrary.simpleMessage(
+      "Blocked exact domains",
+    ),
+    "noAdBypassApp": MessageLookupByLibrary.simpleMessage("Bypass app"),
+    "noAdBypassAppPackage": MessageLookupByLibrary.simpleMessage(
+      "Bypass app package",
+    ),
+    "noAdBypassedAppPackages": MessageLookupByLibrary.simpleMessage(
+      "Bypassed app packages",
+    ),
+    "noAdConfirmSuffixBlocking": MessageLookupByLibrary.simpleMessage(
+      "Confirm suffix blocking",
+    ),
+    "noAdConfirmSuffixBlockingDesc": MessageLookupByLibrary.simpleMessage(
+      "Block this domain and all subdomains?",
+    ),
+    "noAdDetailedMihomoLogs": MessageLookupByLibrary.simpleMessage(
+      "Detailed Mihomo logs",
+    ),
+    "noAdDetailedMihomoLogsDesc": MessageLookupByLibrary.simpleMessage(
+      "Temporarily switches generated config to debug logging. Logs stay in memory.",
+    ),
+    "noAdDomainRequired": MessageLookupByLibrary.simpleMessage(
+      "Domain is required",
+    ),
+    "noAdExportDiagnostics": MessageLookupByLibrary.simpleMessage(
+      "Export diagnostics",
+    ),
+    "noAdExportRawBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "Export raw blocked events",
+    ),
+    "noAdExportRawJsonl": MessageLookupByLibrary.simpleMessage(
+      "Export raw JSONL",
+    ),
+    "noAdExportSaved": MessageLookupByLibrary.simpleMessage("Export saved"),
+    "noAdFallbackRulesLoaded": MessageLookupByLibrary.simpleMessage(
+      "Remote update failed. Loaded bundled anti-AD fallback rules.",
+    ),
+    "noAdFilterAll": MessageLookupByLibrary.simpleMessage("All"),
+    "noAdFilterApp": MessageLookupByLibrary.simpleMessage("App"),
+    "noAdFilterDomain": MessageLookupByLibrary.simpleMessage("Domain"),
+    "noAdInMemoryEvents": MessageLookupByLibrary.simpleMessage(
+      "In-memory events",
+    ),
+    "noAdInvalidDomain": MessageLookupByLibrary.simpleMessage("Invalid domain"),
+    "noAdInvalidDomainSuffix": MessageLookupByLibrary.simpleMessage(
+      "Invalid domain suffix",
+    ),
+    "noAdLastRuleUpdate": MessageLookupByLibrary.simpleMessage(
+      "Last rule update",
+    ),
+    "noAdManualRules": MessageLookupByLibrary.simpleMessage("Manual rules"),
+    "noAdMatchedNoAdRule": MessageLookupByLibrary.simpleMessage(
+      "Matched NoAd rule",
+    ),
+    "noAdNoAllowlistDomains": MessageLookupByLibrary.simpleMessage(
+      "No allowlist domains",
+    ),
+    "noAdNoBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "No blocked events in memory",
+    ),
+    "noAdNoBlockedEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "Events are kept only while the VPN/core session is active.",
+    ),
+    "noAdNoBypassedApps": MessageLookupByLibrary.simpleMessage(
+      "No bypassed apps",
+    ),
+    "noAdNoFilteredEvents": MessageLookupByLibrary.simpleMessage(
+      "No events match the current filter",
+    ),
+    "noAdNoFilteredEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "Change the search text or filter type.",
+    ),
+    "noAdNoManualBlockDomains": MessageLookupByLibrary.simpleMessage(
+      "No manual block domains",
+    ),
+    "noAdNoNoAdMatch": MessageLookupByLibrary.simpleMessage("No NoAd match"),
+    "noAdNoSuffixBlockDomains": MessageLookupByLibrary.simpleMessage(
+      "No suffix block domains",
+    ),
+    "noAdOverview": MessageLookupByLibrary.simpleMessage("Overview"),
+    "noAdPrivacyNotice": MessageLookupByLibrary.simpleMessage(
+      "NoAd does not install a CA certificate and does not decrypt HTTPS. HTTPS entries only show domain/IP/port/app/rule metadata.",
+    ),
+    "noAdRawExportWarning": MessageLookupByLibrary.simpleMessage(
+      "Raw JSONL includes blocked domains, destination IP/port, package names, UIDs, and rule metadata. It does not include URLs, headers, or traffic content. Export only if you intend to share these values.",
+    ),
+    "noAdRuleActions": MessageLookupByLibrary.simpleMessage("Rule actions"),
+    "noAdRuleVersion": MessageLookupByLibrary.simpleMessage("Rule version"),
+    "noAdRules": MessageLookupByLibrary.simpleMessage("Rules"),
+    "noAdRulesUpdateFailed": MessageLookupByLibrary.simpleMessage(
+      "NoAd rules update failed",
+    ),
+    "noAdRulesUpdated": MessageLookupByLibrary.simpleMessage(
+      "NoAd rules updated",
+    ),
+    "noAdSearchBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "Search blocked events",
+    ),
+    "noAdSearchBlockedEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "Filter by all fields, domain, or app package.",
+    ),
+    "noAdSessionBlocked": MessageLookupByLibrary.simpleMessage(
+      "Session blocked",
+    ),
+    "noAdTest": MessageLookupByLibrary.simpleMessage("Test"),
+    "noAdTestDomain": MessageLookupByLibrary.simpleMessage("Test domain"),
+    "noAdToolsDesc": MessageLookupByLibrary.simpleMessage(
+      "Ad blocking, blocked events, and rule controls",
+    ),
+    "noAdTotalBlocked": MessageLookupByLibrary.simpleMessage("Total blocked"),
+    "noAdUnknownHost": MessageLookupByLibrary.simpleMessage("<unknown host>"),
+    "noAdUpdateRemoteRules": MessageLookupByLibrary.simpleMessage(
+      "Update remote rules",
+    ),
+    "noAdUpstreamFLClash": MessageLookupByLibrary.simpleMessage(
+      "Upstream FLClash",
+    ),
     "noData": MessageLookupByLibrary.simpleMessage("No data"),
     "noHotKey": MessageLookupByLibrary.simpleMessage("No HotKey"),
     "noInfo": MessageLookupByLibrary.simpleMessage("No info"),
@@ -739,6 +887,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rainbowScheme": MessageLookupByLibrary.simpleMessage("Rainbow"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Redir Port"),
     "redo": MessageLookupByLibrary.simpleMessage("redo"),
+    "refresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "remote": MessageLookupByLibrary.simpleMessage("Remote"),
     "remoteBackupDesc": MessageLookupByLibrary.simpleMessage(
       "Backup local data to WebDAV",

@@ -615,6 +615,170 @@ class MessageLookup extends MessageLookupByLibrary {
     "networkSpeed": MessageLookupByLibrary.simpleMessage("Скорость сети"),
     "networkType": MessageLookupByLibrary.simpleMessage("Тип сети"),
     "neutralScheme": MessageLookupByLibrary.simpleMessage("Нейтральные"),
+    "noAdAboutSourceDesc": MessageLookupByLibrary.simpleMessage(
+      "NoAd изменяет FLClash под GPL-3.0 и добавляет блокировку рекламных доменов Android с правилами anti-AD.",
+    ),
+    "noAdAboutSourceTitle": MessageLookupByLibrary.simpleMessage(
+      "На основе FLClash v0.8.94",
+    ),
+    "noAdAdBlocking": MessageLookupByLibrary.simpleMessage(
+      "Блокировка рекламы",
+    ),
+    "noAdAdBlockingDesc": MessageLookupByLibrary.simpleMessage(
+      "Блокирует известные рекламные и трекинговые домены на уровне правил VPN/TUN.",
+    ),
+    "noAdAllowDomain": MessageLookupByLibrary.simpleMessage("Разрешить домен"),
+    "noAdAllowExactDomain": MessageLookupByLibrary.simpleMessage(
+      "Разрешить точный домен",
+    ),
+    "noAdAllowedExactDomains": MessageLookupByLibrary.simpleMessage(
+      "Разрешенные точные домены",
+    ),
+    "noAdBlockDomain": MessageLookupByLibrary.simpleMessage(
+      "Блокировать домен",
+    ),
+    "noAdBlockDomainSuffix": MessageLookupByLibrary.simpleMessage(
+      "Блокировать суффикс домена",
+    ),
+    "noAdBlockExactDomain": MessageLookupByLibrary.simpleMessage(
+      "Блокировать точный домен",
+    ),
+    "noAdBlockSuffix": MessageLookupByLibrary.simpleMessage(
+      "Блокировать суффикс",
+    ),
+    "noAdBlocked": MessageLookupByLibrary.simpleMessage("Заблокировано"),
+    "noAdBlockedDomainSuffixes": MessageLookupByLibrary.simpleMessage(
+      "Заблокированные суффиксы доменов",
+    ),
+    "noAdBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "События блокировки",
+    ),
+    "noAdBlockedExactDomains": MessageLookupByLibrary.simpleMessage(
+      "Заблокированные точные домены",
+    ),
+    "noAdBypassApp": MessageLookupByLibrary.simpleMessage("Обход App"),
+    "noAdBypassAppPackage": MessageLookupByLibrary.simpleMessage(
+      "Пакет App для обхода",
+    ),
+    "noAdBypassedAppPackages": MessageLookupByLibrary.simpleMessage(
+      "Пакеты App в обходе",
+    ),
+    "noAdConfirmSuffixBlocking": MessageLookupByLibrary.simpleMessage(
+      "Подтвердите блокировку суффикса",
+    ),
+    "noAdConfirmSuffixBlockingDesc": MessageLookupByLibrary.simpleMessage(
+      "Блокировать этот домен и все поддомены?",
+    ),
+    "noAdDetailedMihomoLogs": MessageLookupByLibrary.simpleMessage(
+      "Подробные логи Mihomo",
+    ),
+    "noAdDetailedMihomoLogsDesc": MessageLookupByLibrary.simpleMessage(
+      "Временно переключает сгенерированную конфигурацию на debug-логи. Логи остаются только в памяти.",
+    ),
+    "noAdDomainRequired": MessageLookupByLibrary.simpleMessage(
+      "Требуется домен",
+    ),
+    "noAdExportDiagnostics": MessageLookupByLibrary.simpleMessage(
+      "Экспорт диагностики",
+    ),
+    "noAdExportRawBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "Экспорт raw событий блокировки",
+    ),
+    "noAdExportRawJsonl": MessageLookupByLibrary.simpleMessage(
+      "Экспорт raw JSONL",
+    ),
+    "noAdExportSaved": MessageLookupByLibrary.simpleMessage("Экспорт сохранен"),
+    "noAdFallbackRulesLoaded": MessageLookupByLibrary.simpleMessage(
+      "Удаленное обновление не удалось. Загружены встроенные резервные правила anti-AD.",
+    ),
+    "noAdFilterAll": MessageLookupByLibrary.simpleMessage("Все"),
+    "noAdFilterApp": MessageLookupByLibrary.simpleMessage("App"),
+    "noAdFilterDomain": MessageLookupByLibrary.simpleMessage("Домен"),
+    "noAdInMemoryEvents": MessageLookupByLibrary.simpleMessage(
+      "События в памяти",
+    ),
+    "noAdInvalidDomain": MessageLookupByLibrary.simpleMessage(
+      "Недопустимый домен",
+    ),
+    "noAdInvalidDomainSuffix": MessageLookupByLibrary.simpleMessage(
+      "Недопустимый суффикс домена",
+    ),
+    "noAdLastRuleUpdate": MessageLookupByLibrary.simpleMessage(
+      "Последнее обновление правил",
+    ),
+    "noAdManualRules": MessageLookupByLibrary.simpleMessage("Ручные правила"),
+    "noAdMatchedNoAdRule": MessageLookupByLibrary.simpleMessage(
+      "Совпало с правилом NoAd",
+    ),
+    "noAdNoAllowlistDomains": MessageLookupByLibrary.simpleMessage(
+      "Нет доменов в allowlist",
+    ),
+    "noAdNoBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "В памяти нет событий блокировки",
+    ),
+    "noAdNoBlockedEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "События хранятся только во время активного сеанса VPN/ядра.",
+    ),
+    "noAdNoBypassedApps": MessageLookupByLibrary.simpleMessage(
+      "Нет App в обходе",
+    ),
+    "noAdNoFilteredEvents": MessageLookupByLibrary.simpleMessage(
+      "Нет событий для текущего фильтра",
+    ),
+    "noAdNoFilteredEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "Измените текст поиска или тип фильтра.",
+    ),
+    "noAdNoManualBlockDomains": MessageLookupByLibrary.simpleMessage(
+      "Нет ручных блокировок доменов",
+    ),
+    "noAdNoNoAdMatch": MessageLookupByLibrary.simpleMessage(
+      "Нет совпадения NoAd",
+    ),
+    "noAdNoSuffixBlockDomains": MessageLookupByLibrary.simpleMessage(
+      "Нет блокировок суффиксов",
+    ),
+    "noAdOverview": MessageLookupByLibrary.simpleMessage("Обзор"),
+    "noAdPrivacyNotice": MessageLookupByLibrary.simpleMessage(
+      "NoAd не устанавливает CA-сертификат и не расшифровывает HTTPS. Записи HTTPS показывают только домен/IP/порт/App/метаданные правила.",
+    ),
+    "noAdRawExportWarning": MessageLookupByLibrary.simpleMessage(
+      "Raw JSONL содержит заблокированные домены, IP/порт назначения, имена пакетов, UID и метаданные правил. Он не содержит URL, заголовки или содержимое трафика. Экспортируйте только если намерены поделиться этими значениями.",
+    ),
+    "noAdRuleActions": MessageLookupByLibrary.simpleMessage("Действия правил"),
+    "noAdRuleVersion": MessageLookupByLibrary.simpleMessage("Версия правил"),
+    "noAdRules": MessageLookupByLibrary.simpleMessage("Правила"),
+    "noAdRulesUpdateFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось обновить правила NoAd",
+    ),
+    "noAdRulesUpdated": MessageLookupByLibrary.simpleMessage(
+      "Правила NoAd обновлены",
+    ),
+    "noAdSearchBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "Поиск событий блокировки",
+    ),
+    "noAdSearchBlockedEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "Фильтр по всем полям, домену или пакету App.",
+    ),
+    "noAdSessionBlocked": MessageLookupByLibrary.simpleMessage(
+      "Заблокировано за сеанс",
+    ),
+    "noAdTest": MessageLookupByLibrary.simpleMessage("Тест"),
+    "noAdTestDomain": MessageLookupByLibrary.simpleMessage("Проверить домен"),
+    "noAdToolsDesc": MessageLookupByLibrary.simpleMessage(
+      "Блокировка рекламы, события блокировки и управление правилами",
+    ),
+    "noAdTotalBlocked": MessageLookupByLibrary.simpleMessage(
+      "Всего заблокировано",
+    ),
+    "noAdUnknownHost": MessageLookupByLibrary.simpleMessage(
+      "<неизвестный хост>",
+    ),
+    "noAdUpdateRemoteRules": MessageLookupByLibrary.simpleMessage(
+      "Обновить удаленные правила",
+    ),
+    "noAdUpstreamFLClash": MessageLookupByLibrary.simpleMessage(
+      "Исходный FLClash",
+    ),
     "noData": MessageLookupByLibrary.simpleMessage("Нет данных"),
     "noHotKey": MessageLookupByLibrary.simpleMessage("Нет горячей клавиши"),
     "noInfo": MessageLookupByLibrary.simpleMessage("Нет информации"),
@@ -776,6 +940,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rainbowScheme": MessageLookupByLibrary.simpleMessage("Радужные"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Redir-порт"),
     "redo": MessageLookupByLibrary.simpleMessage("Повторить"),
+    "refresh": MessageLookupByLibrary.simpleMessage("Обновить"),
     "remote": MessageLookupByLibrary.simpleMessage("Удаленный"),
     "remoteBackupDesc": MessageLookupByLibrary.simpleMessage(
       "Резервное копирование локальных данных на WebDAV",

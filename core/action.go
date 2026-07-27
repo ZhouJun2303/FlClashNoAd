@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"runtime"
@@ -150,8 +151,15 @@ func handleAction(action *Action, result ActionResult) {
 			return
 		}
 		providerName := params["providerName"]
-		data := params["data"]
-		handleSideLoadExternalProvider(providerName, []byte(data), func(value string) {
+		data := []byte(params["data"])
+		if encoded := params["dataBase64"]; encoded != "" {
+			data, err = base64.StdEncoding.DecodeString(encoded)
+			if err != nil {
+				result.success(err.Error())
+				return
+			}
+		}
+		handleSideLoadExternalProvider(providerName, data, func(value string) {
 			result.success(value)
 		})
 		return

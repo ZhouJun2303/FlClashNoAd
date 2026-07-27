@@ -70,8 +70,32 @@ class CoreController {
     }
   }
 
+  static Future<String> initAdBlockRuleFallback({bool force = false}) async {
+    final profilesPath = await appPath.profilesPath;
+    final filePath = getAdBlockRemoteRulePath(profilesPath);
+    final file = File(filePath);
+    if (!force && await file.exists()) {
+      final length = await file.length();
+      if (length > 0) {
+        return file.path;
+      }
+    }
+    final parent = Directory(dirname(filePath));
+    if (!await parent.exists()) {
+      await parent.create(recursive: true);
+    }
+    final data = await rootBundle.load(adBlockFallbackRuleAssetPath);
+    final bytes = data.buffer.asUint8List(
+      data.offsetInBytes,
+      data.lengthInBytes,
+    );
+    await file.writeAsBytes(bytes, flush: true);
+    return file.path;
+  }
+
   Future<bool> init(int version) async {
     await initGeo();
+    await initAdBlockRuleFallback();
     final homeDirPath = await appPath.homeDirPath;
     return _interface.init(InitParams(homeDir: homeDirPath, version: version));
   }
@@ -188,6 +212,30 @@ class CoreController {
     return _interface.sideLoadExternalProvider(
       providerName: providerName,
       data: data,
+    );
+  }
+
+  Future<String> sideLoadExternalProviderBytes({
+    required String providerName,
+    required List<int> bytes,
+  }) {
+    return _interface.sideLoadExternalProvider(
+      providerName: providerName,
+      data: '',
+      dataBase64: base64Encode(bytes),
+    );
+  }
+
+  Future<String> sideLoadAdBlockFallbackRuleProvider() async {
+    final data = await rootBundle.load(adBlockFallbackRuleAssetPath);
+    final bytes = data.buffer.asUint8List(
+      data.offsetInBytes,
+      data.lengthInBytes,
+    );
+    await initAdBlockRuleFallback(force: true);
+    return sideLoadExternalProviderBytes(
+      providerName: adBlockRemoteProviderName,
+      bytes: bytes,
     );
   }
 

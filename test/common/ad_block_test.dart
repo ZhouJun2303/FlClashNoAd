@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fl_clash/common/ad_block.dart';
 import 'package:fl_clash/enum/enum.dart';
@@ -103,6 +104,58 @@ void main() {
       expect(jsonDecode(jsonEncode(config)), first);
     });
 
+
+    test('remote provider includes offline fallback path and update interval', () {
+      final config = _withInjection(
+        remoteRulePath: 'providers/noad/anti-ad.mrs',
+      );
+
+      injectAdBlockConfig(config);
+
+      final provider = config['rule-providers'][adBlockRemoteProviderName];
+      expect(provider['type'], 'http');
+      expect(provider['behavior'], 'domain');
+      expect(provider['format'], 'mrs');
+      expect(provider['url'], adBlockRemoteRuleUrl);
+      expect(provider['path'], 'providers/noad/anti-ad.mrs');
+      expect(provider['interval'], adBlockRuleUpdateIntervalSeconds);
+    });
+
+    test('bundles anti-AD MRS snapshot and MIT license notice', () {
+      expect(File(adBlockFallbackRuleAssetPath).existsSync(), true);
+      expect(File(adBlockFallbackRuleAssetPath).lengthSync(), greaterThan(0));
+      expect(File(adBlockFallbackLicenseAssetPath).existsSync(), true);
+      expect(
+        File(adBlockFallbackLicenseAssetPath).readAsStringSync(),
+        contains('MIT'),
+      );
+    });
+
+    test('blocked event JSON excludes URL, query, header, body, and source IP', () {
+      final json = AdBlockEvent(
+        id: 'event',
+        time: DateTime(2026),
+        host: 'ads.example.com',
+        destinationIp: '203.0.113.10',
+        destinationPort: 443,
+        network: 'tcp',
+        packageName: 'com.example.app',
+        uid: 10001,
+        source: 'anti-ad',
+        rule: 'RuleSet',
+        ruleProvider: adBlockRemoteProviderName,
+        ruleVersion: adBlockDefaultRuleVersion,
+      ).toJson();
+
+      expect(json.keys, isNot(contains('url')));
+      expect(json.keys, isNot(contains('path')));
+      expect(json.keys, isNot(contains('query')));
+      expect(json.keys, isNot(contains('headers')));
+      expect(json.keys, isNot(contains('body')));
+      expect(json.keys, isNot(contains('sourceIp')));
+      expect(json['host'], 'ads.example.com');
+      expect(json['destinationIp'], '203.0.113.10');
+    });
     test('disabled mode removes reserved NoAd config without injecting', () {
       final config = _withInjection(props: const AdBlockProps(enabled: false));
       config['rule-providers'] = {
@@ -139,11 +192,12 @@ Map<String, dynamic> _withInjection({
   AdBlockProps props = const AdBlockProps(),
   Mode logicalMode = Mode.rule,
   Map<String, dynamic> rawConfig = const {},
+  String remoteRulePath = 'providers/noad/anti-ad.mrs',
 }) {
   return withAdBlockInjectionConfig(
     rawConfig: Map<String, dynamic>.from(rawConfig),
     props: props,
-    remoteRulePath: 'providers/noad/anti-ad.mrs',
+    remoteRulePath: remoteRulePath,
     logicalMode: logicalMode,
   );
 }

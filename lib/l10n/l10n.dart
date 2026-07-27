@@ -4493,6 +4493,616 @@ class AppLocalizations {
       args: [count],
     );
   }
+
+  /// `Matched NoAd rule`
+  String get noAdMatchedNoAdRule {
+    return Intl.message(
+      'Matched NoAd rule',
+      name: 'noAdMatchedNoAdRule',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search blocked events`
+  String get noAdSearchBlockedEvents {
+    return Intl.message(
+      'Search blocked events',
+      name: 'noAdSearchBlockedEvents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change the search text or filter type.`
+  String get noAdNoFilteredEventsDesc {
+    return Intl.message(
+      'Change the search text or filter type.',
+      name: 'noAdNoFilteredEventsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NoAd rules updated`
+  String get noAdRulesUpdated {
+    return Intl.message(
+      'NoAd rules updated',
+      name: 'noAdRulesUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last rule update`
+  String get noAdLastRuleUpdate {
+    return Intl.message(
+      'Last rule update',
+      name: 'noAdLastRuleUpdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm suffix blocking`
+  String get noAdConfirmSuffixBlocking {
+    return Intl.message(
+      'Confirm suffix blocking',
+      name: 'noAdConfirmSuffixBlocking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow exact domain`
+  String get noAdAllowExactDomain {
+    return Intl.message(
+      'Allow exact domain',
+      name: 'noAdAllowExactDomain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Session blocked`
+  String get noAdSessionBlocked {
+    return Intl.message(
+      'Session blocked',
+      name: 'noAdSessionBlocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Filter by all fields, domain, or app package.`
+  String get noAdSearchBlockedEventsDesc {
+    return Intl.message(
+      'Filter by all fields, domain, or app package.',
+      name: 'noAdSearchBlockedEventsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ad blocking`
+  String get noAdAdBlocking {
+    return Intl.message(
+      'Ad blocking',
+      name: 'noAdAdBlocking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Based on FLClash v0.8.94`
+  String get noAdAboutSourceTitle {
+    return Intl.message(
+      'Based on FLClash v0.8.94',
+      name: 'noAdAboutSourceTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NoAd does not install a CA certificate and does not decrypt HTTPS. HTTPS entries only show domain/IP/port/app/rule metadata.`
+  String get noAdPrivacyNotice {
+    return Intl.message(
+      'NoAd does not install a CA certificate and does not decrypt HTTPS. HTTPS entries only show domain/IP/port/app/rule metadata.',
+      name: 'noAdPrivacyNotice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upstream FLClash`
+  String get noAdUpstreamFLClash {
+    return Intl.message(
+      'Upstream FLClash',
+      name: 'noAdUpstreamFLClash',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total blocked`
+  String get noAdTotalBlocked {
+    return Intl.message(
+      'Total blocked',
+      name: 'noAdTotalBlocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ad blocking, blocked events, and rule controls`
+  String get noAdToolsDesc {
+    return Intl.message(
+      'Ad blocking, blocked events, and rule controls',
+      name: 'noAdToolsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No manual block domains`
+  String get noAdNoManualBlockDomains {
+    return Intl.message(
+      'No manual block domains',
+      name: 'noAdNoManualBlockDomains',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App`
+  String get noAdFilterApp {
+    return Intl.message('App', name: 'noAdFilterApp', desc: '', args: []);
+  }
+
+  /// `Export diagnostics`
+  String get noAdExportDiagnostics {
+    return Intl.message(
+      'Export diagnostics',
+      name: 'noAdExportDiagnostics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bypass app`
+  String get noAdBypassApp {
+    return Intl.message(
+      'Bypass app',
+      name: 'noAdBypassApp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No events match the current filter`
+  String get noAdNoFilteredEvents {
+    return Intl.message(
+      'No events match the current filter',
+      name: 'noAdNoFilteredEvents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bypass app package`
+  String get noAdBypassAppPackage {
+    return Intl.message(
+      'Bypass app package',
+      name: 'noAdBypassAppPackage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocked domain suffixes`
+  String get noAdBlockedDomainSuffixes {
+    return Intl.message(
+      'Blocked domain suffixes',
+      name: 'noAdBlockedDomainSuffixes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export saved`
+  String get noAdExportSaved {
+    return Intl.message(
+      'Export saved',
+      name: 'noAdExportSaved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid domain suffix`
+  String get noAdInvalidDomainSuffix {
+    return Intl.message(
+      'Invalid domain suffix',
+      name: 'noAdInvalidDomainSuffix',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bypassed app packages`
+  String get noAdBypassedAppPackages {
+    return Intl.message(
+      'Bypassed app packages',
+      name: 'noAdBypassedAppPackages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Overview`
+  String get noAdOverview {
+    return Intl.message('Overview', name: 'noAdOverview', desc: '', args: []);
+  }
+
+  /// `Rules`
+  String get noAdRules {
+    return Intl.message('Rules', name: 'noAdRules', desc: '', args: []);
+  }
+
+  /// `<unknown host>`
+  String get noAdUnknownHost {
+    return Intl.message(
+      '<unknown host>',
+      name: 'noAdUnknownHost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No allowlist domains`
+  String get noAdNoAllowlistDomains {
+    return Intl.message(
+      'No allowlist domains',
+      name: 'noAdNoAllowlistDomains',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block exact domain`
+  String get noAdBlockExactDomain {
+    return Intl.message(
+      'Block exact domain',
+      name: 'noAdBlockExactDomain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get noAdFilterAll {
+    return Intl.message('All', name: 'noAdFilterAll', desc: '', args: []);
+  }
+
+  /// `Remote update failed. Loaded bundled anti-AD fallback rules.`
+  String get noAdFallbackRulesLoaded {
+    return Intl.message(
+      'Remote update failed. Loaded bundled anti-AD fallback rules.',
+      name: 'noAdFallbackRulesLoaded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test domain`
+  String get noAdTestDomain {
+    return Intl.message(
+      'Test domain',
+      name: 'noAdTestDomain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocked exact domains`
+  String get noAdBlockedExactDomains {
+    return Intl.message(
+      'Blocked exact domains',
+      name: 'noAdBlockedExactDomains',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No NoAd match`
+  String get noAdNoNoAdMatch {
+    return Intl.message(
+      'No NoAd match',
+      name: 'noAdNoNoAdMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NoAd rules update failed`
+  String get noAdRulesUpdateFailed {
+    return Intl.message(
+      'NoAd rules update failed',
+      name: 'noAdRulesUpdateFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refresh`
+  String get refresh {
+    return Intl.message('Refresh', name: 'refresh', desc: '', args: []);
+  }
+
+  /// `Detailed Mihomo logs`
+  String get noAdDetailedMihomoLogs {
+    return Intl.message(
+      'Detailed Mihomo logs',
+      name: 'noAdDetailedMihomoLogs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manual rules`
+  String get noAdManualRules {
+    return Intl.message(
+      'Manual rules',
+      name: 'noAdManualRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export raw blocked events`
+  String get noAdExportRawBlockedEvents {
+    return Intl.message(
+      'Export raw blocked events',
+      name: 'noAdExportRawBlockedEvents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocked`
+  String get noAdBlocked {
+    return Intl.message('Blocked', name: 'noAdBlocked', desc: '', args: []);
+  }
+
+  /// `Allowed exact domains`
+  String get noAdAllowedExactDomains {
+    return Intl.message(
+      'Allowed exact domains',
+      name: 'noAdAllowedExactDomains',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Domain is required`
+  String get noAdDomainRequired {
+    return Intl.message(
+      'Domain is required',
+      name: 'noAdDomainRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export raw JSONL`
+  String get noAdExportRawJsonl {
+    return Intl.message(
+      'Export raw JSONL',
+      name: 'noAdExportRawJsonl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid domain`
+  String get noAdInvalidDomain {
+    return Intl.message(
+      'Invalid domain',
+      name: 'noAdInvalidDomain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In-memory events`
+  String get noAdInMemoryEvents {
+    return Intl.message(
+      'In-memory events',
+      name: 'noAdInMemoryEvents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block this domain and all subdomains?`
+  String get noAdConfirmSuffixBlockingDesc {
+    return Intl.message(
+      'Block this domain and all subdomains?',
+      name: 'noAdConfirmSuffixBlockingDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Test`
+  String get noAdTest {
+    return Intl.message('Test', name: 'noAdTest', desc: '', args: []);
+  }
+
+  /// `Block domain suffix`
+  String get noAdBlockDomainSuffix {
+    return Intl.message(
+      'Block domain suffix',
+      name: 'noAdBlockDomainSuffix',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block domain`
+  String get noAdBlockDomain {
+    return Intl.message(
+      'Block domain',
+      name: 'noAdBlockDomain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No bypassed apps`
+  String get noAdNoBypassedApps {
+    return Intl.message(
+      'No bypassed apps',
+      name: 'noAdNoBypassedApps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `NoAd modifies FLClash under GPL-3.0 and adds Android ad-domain blocking with anti-AD rules.`
+  String get noAdAboutSourceDesc {
+    return Intl.message(
+      'NoAd modifies FLClash under GPL-3.0 and adds Android ad-domain blocking with anti-AD rules.',
+      name: 'noAdAboutSourceDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocked events`
+  String get noAdBlockedEvents {
+    return Intl.message(
+      'Blocked events',
+      name: 'noAdBlockedEvents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Events are kept only while the VPN/core session is active.`
+  String get noAdNoBlockedEventsDesc {
+    return Intl.message(
+      'Events are kept only while the VPN/core session is active.',
+      name: 'noAdNoBlockedEventsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No suffix block domains`
+  String get noAdNoSuffixBlockDomains {
+    return Intl.message(
+      'No suffix block domains',
+      name: 'noAdNoSuffixBlockDomains',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Temporarily switches generated config to debug logging. Logs stay in memory.`
+  String get noAdDetailedMihomoLogsDesc {
+    return Intl.message(
+      'Temporarily switches generated config to debug logging. Logs stay in memory.',
+      name: 'noAdDetailedMihomoLogsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allow domain`
+  String get noAdAllowDomain {
+    return Intl.message(
+      'Allow domain',
+      name: 'noAdAllowDomain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Domain`
+  String get noAdFilterDomain {
+    return Intl.message('Domain', name: 'noAdFilterDomain', desc: '', args: []);
+  }
+
+  /// `Raw JSONL includes blocked domains, destination IP/port, package names, UIDs, and rule metadata. It does not include URLs, headers, or traffic content. Export only if you intend to share these values.`
+  String get noAdRawExportWarning {
+    return Intl.message(
+      'Raw JSONL includes blocked domains, destination IP/port, package names, UIDs, and rule metadata. It does not include URLs, headers, or traffic content. Export only if you intend to share these values.',
+      name: 'noAdRawExportWarning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update remote rules`
+  String get noAdUpdateRemoteRules {
+    return Intl.message(
+      'Update remote rules',
+      name: 'noAdUpdateRemoteRules',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rule actions`
+  String get noAdRuleActions {
+    return Intl.message(
+      'Rule actions',
+      name: 'noAdRuleActions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block suffix`
+  String get noAdBlockSuffix {
+    return Intl.message(
+      'Block suffix',
+      name: 'noAdBlockSuffix',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rule version`
+  String get noAdRuleVersion {
+    return Intl.message(
+      'Rule version',
+      name: 'noAdRuleVersion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocks known ad and tracking domains through the VPN/TUN rule layer.`
+  String get noAdAdBlockingDesc {
+    return Intl.message(
+      'Blocks known ad and tracking domains through the VPN/TUN rule layer.',
+      name: 'noAdAdBlockingDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No blocked events in memory`
+  String get noAdNoBlockedEvents {
+    return Intl.message(
+      'No blocked events in memory',
+      name: 'noAdNoBlockedEvents',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

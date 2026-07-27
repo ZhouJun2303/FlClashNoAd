@@ -8,6 +8,8 @@ const adBlockRemoteProviderName = '__noad_anti_ad';
 const adBlockAllowProviderName = '__noad_allow';
 const adBlockLocalBlockProviderName = '__noad_local_block';
 const adBlockRemoteRuleUrl = 'https://anti-ad.net/mihomo.mrs';
+const adBlockFallbackRuleAssetPath = 'assets/data/noad/anti-ad.mrs';
+const adBlockFallbackLicenseAssetPath = 'assets/data/noad/ANTI_AD_LICENSE.txt';
 const adBlockDefaultRuleVersion = 'anti-ad:mihomo.mrs';
 const adBlockRuleUpdateIntervalSeconds = 24 * 60 * 60;
 
@@ -76,10 +78,7 @@ void injectAdBlockConfig(Map<String, dynamic> rawConfig) {
 
   final localBlockPayload = [
     ..._classicalDomainPayload('DOMAIN', props.blockDomains),
-    ..._classicalDomainPayload(
-      'DOMAIN-SUFFIX',
-      props.blockDomainSuffixes,
-    ),
+    ..._classicalDomainPayload('DOMAIN-SUFFIX', props.blockDomainSuffixes),
   ];
   if (localBlockPayload.isNotEmpty) {
     ruleProviders[adBlockLocalBlockProviderName] = {
@@ -89,9 +88,9 @@ void injectAdBlockConfig(Map<String, dynamic> rawConfig) {
     };
   }
 
-  final userRules = _rules(rawConfig['rules'])
-      .where((rule) => !_isReservedNoAdRule(rule))
-      .toList();
+  final userRules = _rules(
+    rawConfig['rules'],
+  ).where((rule) => !_isReservedNoAdRule(rule)).toList();
   final noAdRules = <String>[
     for (final package in _normalizedItems(props.bypassPackages))
       'PROCESS-NAME,$package,PASS-RULE',
@@ -119,9 +118,9 @@ void _removeReservedNoAdConfig(Map<String, dynamic> rawConfig) {
       rawConfig.remove('rule-providers');
     }
   }
-  rawConfig['rules'] = _rules(rawConfig['rules'])
-      .where((rule) => !_isReservedNoAdRule(rule))
-      .toList();
+  rawConfig['rules'] = _rules(
+    rawConfig['rules'],
+  ).where((rule) => !_isReservedNoAdRule(rule)).toList();
 }
 
 Map _ensureMap(Map<String, dynamic> rawConfig, String key) {

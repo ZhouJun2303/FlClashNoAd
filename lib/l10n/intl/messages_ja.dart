@@ -462,6 +462,134 @@ class MessageLookup extends MessageLookupByLibrary {
     "networkSpeed": MessageLookupByLibrary.simpleMessage("ネットワーク速度"),
     "networkType": MessageLookupByLibrary.simpleMessage("ネットワーク種別"),
     "neutralScheme": MessageLookupByLibrary.simpleMessage("ニュートラル"),
+    "noAdAboutSourceDesc": MessageLookupByLibrary.simpleMessage(
+      "NoAd は GPL-3.0 の下で FLClash を変更し、Android の広告ドメインブロックと anti-AD ルールを追加します。",
+    ),
+    "noAdAboutSourceTitle": MessageLookupByLibrary.simpleMessage(
+      "FLClash v0.8.94 ベース",
+    ),
+    "noAdAdBlocking": MessageLookupByLibrary.simpleMessage("広告ブロック"),
+    "noAdAdBlockingDesc": MessageLookupByLibrary.simpleMessage(
+      "VPN/TUN ルール層で既知の広告・追跡ドメインをブロックします。",
+    ),
+    "noAdAllowDomain": MessageLookupByLibrary.simpleMessage("ドメインを許可"),
+    "noAdAllowExactDomain": MessageLookupByLibrary.simpleMessage("完全一致ドメインを許可"),
+    "noAdAllowedExactDomains": MessageLookupByLibrary.simpleMessage(
+      "許可済み完全一致ドメイン",
+    ),
+    "noAdBlockDomain": MessageLookupByLibrary.simpleMessage("ドメインをブロック"),
+    "noAdBlockDomainSuffix": MessageLookupByLibrary.simpleMessage(
+      "ドメインサフィックスをブロック",
+    ),
+    "noAdBlockExactDomain": MessageLookupByLibrary.simpleMessage(
+      "完全一致ドメインをブロック",
+    ),
+    "noAdBlockSuffix": MessageLookupByLibrary.simpleMessage("サフィックスをブロック"),
+    "noAdBlocked": MessageLookupByLibrary.simpleMessage("ブロック済み"),
+    "noAdBlockedDomainSuffixes": MessageLookupByLibrary.simpleMessage(
+      "ブロック済みドメインサフィックス",
+    ),
+    "noAdBlockedEvents": MessageLookupByLibrary.simpleMessage("ブロックイベント"),
+    "noAdBlockedExactDomains": MessageLookupByLibrary.simpleMessage(
+      "ブロック済み完全一致ドメイン",
+    ),
+    "noAdBypassApp": MessageLookupByLibrary.simpleMessage("App をバイパス"),
+    "noAdBypassAppPackage": MessageLookupByLibrary.simpleMessage(
+      "App パッケージをバイパス",
+    ),
+    "noAdBypassedAppPackages": MessageLookupByLibrary.simpleMessage(
+      "バイパス済み App パッケージ",
+    ),
+    "noAdConfirmSuffixBlocking": MessageLookupByLibrary.simpleMessage(
+      "サフィックスブロックの確認",
+    ),
+    "noAdConfirmSuffixBlockingDesc": MessageLookupByLibrary.simpleMessage(
+      "このドメインとすべてのサブドメインをブロックしますか？",
+    ),
+    "noAdDetailedMihomoLogs": MessageLookupByLibrary.simpleMessage(
+      "詳細 Mihomo ログ",
+    ),
+    "noAdDetailedMihomoLogsDesc": MessageLookupByLibrary.simpleMessage(
+      "生成設定を一時的に debug ログへ切り替えます。ログはメモリ内にのみ保持されます。",
+    ),
+    "noAdDomainRequired": MessageLookupByLibrary.simpleMessage("ドメインが必要です"),
+    "noAdExportDiagnostics": MessageLookupByLibrary.simpleMessage("診断をエクスポート"),
+    "noAdExportRawBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "生のブロックイベントをエクスポート",
+    ),
+    "noAdExportRawJsonl": MessageLookupByLibrary.simpleMessage(
+      "生 JSONL をエクスポート",
+    ),
+    "noAdExportSaved": MessageLookupByLibrary.simpleMessage("エクスポートを保存しました"),
+    "noAdFallbackRulesLoaded": MessageLookupByLibrary.simpleMessage(
+      "リモート更新に失敗しました。内蔵 anti-AD フォールバックルールを読み込みました。",
+    ),
+    "noAdFilterAll": MessageLookupByLibrary.simpleMessage("すべて"),
+    "noAdFilterApp": MessageLookupByLibrary.simpleMessage("App"),
+    "noAdFilterDomain": MessageLookupByLibrary.simpleMessage("ドメイン"),
+    "noAdInMemoryEvents": MessageLookupByLibrary.simpleMessage("メモリ内イベント"),
+    "noAdInvalidDomain": MessageLookupByLibrary.simpleMessage("無効なドメイン"),
+    "noAdInvalidDomainSuffix": MessageLookupByLibrary.simpleMessage(
+      "無効なドメインサフィックス",
+    ),
+    "noAdLastRuleUpdate": MessageLookupByLibrary.simpleMessage("最終ルール更新"),
+    "noAdManualRules": MessageLookupByLibrary.simpleMessage("手動ルール"),
+    "noAdMatchedNoAdRule": MessageLookupByLibrary.simpleMessage("NoAd ルールに一致"),
+    "noAdNoAllowlistDomains": MessageLookupByLibrary.simpleMessage(
+      "許可リストのドメインはありません",
+    ),
+    "noAdNoBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "メモリ内にブロックイベントはありません",
+    ),
+    "noAdNoBlockedEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "イベントは VPN/コアセッションが有効な間だけ保持されます。",
+    ),
+    "noAdNoBypassedApps": MessageLookupByLibrary.simpleMessage(
+      "バイパス App はありません",
+    ),
+    "noAdNoFilteredEvents": MessageLookupByLibrary.simpleMessage(
+      "現在のフィルターに一致するイベントはありません",
+    ),
+    "noAdNoFilteredEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "検索語またはフィルター種別を変更してください。",
+    ),
+    "noAdNoManualBlockDomains": MessageLookupByLibrary.simpleMessage(
+      "手動ブロックドメインはありません",
+    ),
+    "noAdNoNoAdMatch": MessageLookupByLibrary.simpleMessage("NoAd ルールに一致しません"),
+    "noAdNoSuffixBlockDomains": MessageLookupByLibrary.simpleMessage(
+      "サフィックスブロックドメインはありません",
+    ),
+    "noAdOverview": MessageLookupByLibrary.simpleMessage("概要"),
+    "noAdPrivacyNotice": MessageLookupByLibrary.simpleMessage(
+      "NoAd は CA 証明書をインストールせず、HTTPS を復号しません。HTTPS 記録にはドメイン/IP/ポート/App/ルールのメタデータのみ表示されます。",
+    ),
+    "noAdRawExportWarning": MessageLookupByLibrary.simpleMessage(
+      "生 JSONL にはブロックされたドメイン、宛先 IP/ポート、パッケージ名、UID、ルールメタデータが含まれます。URL、ヘッダー、通信内容は含まれません。共有する意図がある場合のみエクスポートしてください。",
+    ),
+    "noAdRuleActions": MessageLookupByLibrary.simpleMessage("ルール操作"),
+    "noAdRuleVersion": MessageLookupByLibrary.simpleMessage("ルールバージョン"),
+    "noAdRules": MessageLookupByLibrary.simpleMessage("ルール"),
+    "noAdRulesUpdateFailed": MessageLookupByLibrary.simpleMessage(
+      "NoAd ルール更新に失敗しました",
+    ),
+    "noAdRulesUpdated": MessageLookupByLibrary.simpleMessage("NoAd ルールを更新しました"),
+    "noAdSearchBlockedEvents": MessageLookupByLibrary.simpleMessage(
+      "ブロックイベントを検索",
+    ),
+    "noAdSearchBlockedEventsDesc": MessageLookupByLibrary.simpleMessage(
+      "全項目、ドメイン、App パッケージで絞り込みます。",
+    ),
+    "noAdSessionBlocked": MessageLookupByLibrary.simpleMessage("セッション内ブロック"),
+    "noAdTest": MessageLookupByLibrary.simpleMessage("テスト"),
+    "noAdTestDomain": MessageLookupByLibrary.simpleMessage("ドメインをテスト"),
+    "noAdToolsDesc": MessageLookupByLibrary.simpleMessage(
+      "広告ブロック、ブロックイベント、ルール制御",
+    ),
+    "noAdTotalBlocked": MessageLookupByLibrary.simpleMessage("合計ブロック"),
+    "noAdUnknownHost": MessageLookupByLibrary.simpleMessage("<不明なホスト>"),
+    "noAdUpdateRemoteRules": MessageLookupByLibrary.simpleMessage("リモートルールを更新"),
+    "noAdUpstreamFLClash": MessageLookupByLibrary.simpleMessage("上流 FLClash"),
     "noData": MessageLookupByLibrary.simpleMessage("データなし"),
     "noHotKey": MessageLookupByLibrary.simpleMessage("ホットキーなし"),
     "noInfo": MessageLookupByLibrary.simpleMessage("情報なし"),
@@ -591,6 +719,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rainbowScheme": MessageLookupByLibrary.simpleMessage("レインボー"),
     "redirPort": MessageLookupByLibrary.simpleMessage("Redirポート"),
     "redo": MessageLookupByLibrary.simpleMessage("やり直す"),
+    "refresh": MessageLookupByLibrary.simpleMessage("更新"),
     "remote": MessageLookupByLibrary.simpleMessage("リモート"),
     "remoteBackupDesc": MessageLookupByLibrary.simpleMessage(
       "WebDAVにデータをバックアップ",

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/core/controller.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
@@ -15,25 +16,22 @@ class NoAdView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
     return DefaultTabController(
       length: 3,
       child: CommonScaffold(
         appBar: AppBar(
           title: const Text('NoAd'),
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
-              Tab(text: 'Overview'),
-              Tab(text: 'Blocked'),
-              Tab(text: 'Rules'),
+              Tab(text: appLocalizations.noAdOverview),
+              Tab(text: appLocalizations.noAdBlocked),
+              Tab(text: appLocalizations.noAdRules),
             ],
           ),
         ),
         body: const TabBarView(
-          children: [
-            _NoAdOverviewTab(),
-            _NoAdEventsTab(),
-            _NoAdRulesTab(),
-          ],
+          children: [_NoAdOverviewTab(), _NoAdEventsTab(), _NoAdRulesTab()],
         ),
       ),
     );
@@ -45,6 +43,7 @@ class _NoAdOverviewTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final appLocalizations = context.appLocalizations;
     final props = ref.watch(adBlockSettingProvider);
     final snapshot = ref.watch(adBlockSnapshotProvider);
     final eventsCount = snapshot.events.length;
@@ -53,88 +52,135 @@ class _NoAdOverviewTab extends ConsumerWidget {
       children: [
         ListItem.switchItem(
           leading: const Icon(Icons.block),
-          title: const Text('Ad blocking'),
-          subtitle: const Text(
-            'Blocks known ad and tracking domains through the VPN/TUN rule layer.',
-          ),
+          title: Text(appLocalizations.noAdAdBlocking),
+          subtitle: Text(appLocalizations.noAdAdBlockingDesc),
           delegate: SwitchDelegate(
             value: props.enabled,
             onChanged: (value) {
               ref
                   .read(adBlockSettingProvider.notifier)
                   .update((state) => state.copyWith(enabled: value));
-              ref.read(setupActionProvider.notifier).applyProfileDebounce(
-                    silence: true,
-                    force: true,
-                  );
+              ref
+                  .read(setupActionProvider.notifier)
+                  .applyProfileDebounce(silence: true, force: true);
             },
           ),
         ),
         const Divider(height: 0),
         ListItem.switchItem(
           leading: const Icon(Icons.bug_report_outlined),
-          title: const Text('Detailed Mihomo logs'),
-          subtitle: const Text(
-            'Temporarily switches generated config to debug logging. Logs stay in memory.',
-          ),
+          title: Text(appLocalizations.noAdDetailedMihomoLogs),
+          subtitle: Text(appLocalizations.noAdDetailedMihomoLogsDesc),
           delegate: SwitchDelegate(
             value: props.detailedLog,
             onChanged: (value) {
               ref
                   .read(adBlockSettingProvider.notifier)
                   .update((state) => state.copyWith(detailedLog: value));
-              ref.read(setupActionProvider.notifier).applyProfileDebounce(
-                    silence: true,
-                    force: true,
-                  );
+              ref
+                  .read(setupActionProvider.notifier)
+                  .applyProfileDebounce(silence: true, force: true);
             },
           ),
         ),
         ...generateSection(
-          title: 'Status',
+          title: appLocalizations.status,
           items: [
             _MetricItem(
               icon: Icons.shield_outlined,
-              title: 'Session blocked',
+              title: appLocalizations.noAdSessionBlocked,
               value: '${snapshot.sessionBlocked}',
             ),
             _MetricItem(
               icon: Icons.all_inclusive,
-              title: 'Total blocked',
+              title: appLocalizations.noAdTotalBlocked,
               value: '${snapshot.totalBlocked}',
             ),
             _MetricItem(
               icon: Icons.storage_outlined,
-              title: 'In-memory events',
+              title: appLocalizations.noAdInMemoryEvents,
               value: '$eventsCount / ${snapshot.capacity}',
             ),
             _MetricItem(
               icon: Icons.rule_folder_outlined,
-              title: 'Rule version',
+              title: appLocalizations.noAdRuleVersion,
               value: snapshot.ruleVersion.isEmpty
                   ? adBlockDefaultRuleVersion
                   : snapshot.ruleVersion,
             ),
+            _MetricItem(
+              icon: Icons.update,
+              title: appLocalizations.noAdLastRuleUpdate,
+              value: props.lastUpdateAt == null
+                  ? appLocalizations.unknown
+                  : props.lastUpdateAt!.getLastUpdateTimeDesc(context),
+            ),
           ],
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Text(
-            'NoAd does not install a CA certificate and does not decrypt HTTPS. HTTPS entries only show domain/IP/port/app/rule metadata.',
-          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Text(appLocalizations.noAdPrivacyNotice),
         ),
       ],
     );
   }
 }
 
-class _NoAdEventsTab extends ConsumerWidget {
+enum _NoAdEventFilter { all, domain, app }
+
+extension _NoAdEventFilterExt on _NoAdEventFilter {
+  String label(AppLocalizations appLocalizations) {
+    return switch (this) {
+      _NoAdEventFilter.all => appLocalizations.noAdFilterAll,
+      _NoAdEventFilter.domain => appLocalizations.noAdFilterDomain,
+      _NoAdEventFilter.app => appLocalizations.noAdFilterApp,
+    };
+  }
+}
+
+class _NoAdEventsTab extends ConsumerStatefulWidget {
   const _NoAdEventsTab();
 
-  List<Widget> _buildActions(WidgetRef ref, bool hasEvents) {
+  @override
+  ConsumerState<_NoAdEventsTab> createState() => _NoAdEventsTabState();
+}
+
+class _NoAdEventsTabState extends ConsumerState<_NoAdEventsTab> {
+  String _query = '';
+  _NoAdEventFilter _filter = _NoAdEventFilter.all;
+
+  List<AdBlockEvent> _filterEvents(List<AdBlockEvent> events) {
+    final query = _query.trim().toLowerCase();
+    if (query.isEmpty) {
+      return events;
+    }
+    return events.where((event) {
+      final host = event.host.toLowerCase();
+      final packageName = event.packageName?.toLowerCase() ?? '';
+      final ruleProvider = event.ruleProvider.toLowerCase();
+      final source = event.source.toLowerCase();
+      final network = event.network.toLowerCase();
+      return switch (_filter) {
+        _NoAdEventFilter.domain => host.contains(query),
+        _NoAdEventFilter.app => packageName.contains(query),
+        _NoAdEventFilter.all =>
+          host.contains(query) ||
+              packageName.contains(query) ||
+              ruleProvider.contains(query) ||
+              source.contains(query) ||
+              network.contains(query),
+      };
+    }).toList();
+  }
+
+  List<Widget> _buildActions(
+    WidgetRef ref,
+    bool hasEvents,
+    AppLocalizations appLocalizations,
+  ) {
     return [
       IconButton(
-        tooltip: 'Refresh',
+        tooltip: appLocalizations.refresh,
         onPressed: () async {
           ref
               .read(adBlockSnapshotProvider.notifier)
@@ -143,18 +189,18 @@ class _NoAdEventsTab extends ConsumerWidget {
         icon: const Icon(Icons.refresh),
       ),
       IconButton(
-        tooltip: 'Export diagnostics',
+        tooltip: appLocalizations.noAdExportDiagnostics,
         onPressed: !hasEvents ? null : () => _exportDiagnostics(ref),
         icon: const Icon(Icons.ios_share_outlined),
       ),
       IconButton(
-        tooltip: 'Export raw JSONL',
+        tooltip: appLocalizations.noAdExportRawJsonl,
         onPressed: !hasEvents ? null : () => _exportRawJsonl(ref),
         icon: const Icon(Icons.data_object_outlined),
       ),
       if (hasEvents)
         IconButton(
-          tooltip: 'Clear',
+          tooltip: appLocalizations.delete,
           onPressed: () async {
             await coreController.clearAdBlockEvents();
             ref.read(adBlockSnapshotProvider.notifier).clear();
@@ -165,6 +211,7 @@ class _NoAdEventsTab extends ConsumerWidget {
   }
 
   Future<void> _exportDiagnostics(WidgetRef ref) async {
+    final appLocalizations = context.appLocalizations;
     final snapshot = ref.read(adBlockSnapshotProvider);
     final diagnostics = {
       'type': 'noad-diagnostics',
@@ -177,18 +224,17 @@ class _NoAdEventsTab extends ConsumerWidget {
       'events': snapshot.events.map(_redactedEventJson).toList(),
     };
     await _saveExport(
-      title: 'Export NoAd diagnostics',
+      title: appLocalizations.noAdExportDiagnostics,
       fileName: 'noad-diagnostics.json',
       content: const JsonEncoder.withIndent('  ').convert(diagnostics),
     );
   }
 
   Future<void> _exportRawJsonl(WidgetRef ref) async {
+    final appLocalizations = context.appLocalizations;
     final confirmed = await globalState.showMessage(
-      title: 'Export raw blocked events',
-      message: const TextSpan(
-        text: 'Raw JSONL includes blocked domains, destination IP/port, package names, UIDs, and rule metadata. It does not include URLs, headers, or traffic content. Export only if you intend to share these values.',
-      ),
+      title: appLocalizations.noAdExportRawBlockedEvents,
+      message: TextSpan(text: appLocalizations.noAdRawExportWarning),
     );
     if (confirmed != true) {
       return;
@@ -198,7 +244,7 @@ class _NoAdEventsTab extends ConsumerWidget {
         .map((event) => jsonEncode(event.toJson()))
         .join('\n');
     await _saveExport(
-      title: 'Export raw NoAd JSONL',
+      title: appLocalizations.noAdExportRawJsonl,
       fileName: 'noad-blocked-events.jsonl',
       content: content,
     );
@@ -226,6 +272,7 @@ class _NoAdEventsTab extends ConsumerWidget {
     required String fileName,
     required String content,
   }) async {
+    final appLocalizations = context.appLocalizations;
     final exported = await globalState.safeRun<bool>(() async {
       final tempFilePath = await appPath.tempFilePath;
       final file = File(tempFilePath);
@@ -235,47 +282,107 @@ class _NoAdEventsTab extends ConsumerWidget {
     if (exported == true) {
       globalState.showMessage(
         title: 'NoAd',
-        message: const TextSpan(text: 'Export saved'),
+        message: TextSpan(text: appLocalizations.noAdExportSaved),
       );
     }
   }
 
+  Widget _buildSearchAndFilter(AppLocalizations appLocalizations) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            onChanged: (value) {
+              setState(() {
+                _query = value;
+              });
+            },
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              labelText: appLocalizations.noAdSearchBlockedEvents,
+              helperText: appLocalizations.noAdSearchBlockedEventsDesc,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final filter in _NoAdEventFilter.values)
+                ChoiceChip(
+                  label: Text(filter.label(appLocalizations)),
+                  selected: filter == _filter,
+                  onSelected: (_) {
+                    setState(() {
+                      _filter = filter;
+                    });
+                  },
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
     final snapshot = ref.watch(adBlockSnapshotProvider);
     final hasEvents = snapshot.events.isNotEmpty;
+    final events = _filterEvents(snapshot.events);
     if (!hasEvents) {
       return ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
           ListHeader(
-            title: 'Blocked events',
-            actions: _buildActions(ref, false),
+            title: appLocalizations.noAdBlockedEvents,
+            actions: _buildActions(ref, false, appLocalizations),
           ),
-          const ListItem(
-            leading: Icon(Icons.inbox_outlined),
-            title: Text('No blocked events in memory'),
-            subtitle: Text(
-              'Events are kept only while the VPN/core session is active.',
-            ),
+          _buildSearchAndFilter(appLocalizations),
+          ListItem(
+            leading: const Icon(Icons.inbox_outlined),
+            title: Text(appLocalizations.noAdNoBlockedEvents),
+            subtitle: Text(appLocalizations.noAdNoBlockedEventsDesc),
+          ),
+        ],
+      );
+    }
+    if (events.isEmpty) {
+      return ListView(
+        padding: const EdgeInsets.only(bottom: 24),
+        children: [
+          ListHeader(
+            title: appLocalizations.noAdBlockedEvents,
+            actions: _buildActions(ref, true, appLocalizations),
+          ),
+          _buildSearchAndFilter(appLocalizations),
+          ListItem(
+            leading: const Icon(Icons.filter_alt_off_outlined),
+            title: Text(appLocalizations.noAdNoFilteredEvents),
+            subtitle: Text(appLocalizations.noAdNoFilteredEventsDesc),
           ),
         ],
       );
     }
     return ListView.separated(
       padding: const EdgeInsets.only(bottom: 24),
-      itemCount: snapshot.events.length + 1,
-      separatorBuilder: (_, index) => index == 0
-          ? const SizedBox.shrink()
-          : const Divider(height: 0),
+      itemCount: events.length + 2,
+      separatorBuilder: (_, index) =>
+          index < 2 ? const SizedBox.shrink() : const Divider(height: 0),
       itemBuilder: (context, index) {
         if (index == 0) {
           return ListHeader(
-            title: 'Blocked events',
-            actions: _buildActions(ref, true),
+            title: appLocalizations.noAdBlockedEvents,
+            actions: _buildActions(ref, true, appLocalizations),
           );
         }
-        final event = snapshot.events[index - 1];
+        if (index == 1) {
+          return _buildSearchAndFilter(appLocalizations);
+        }
+        final event = events[index - 2];
         return _AdBlockEventItem(event: event);
       },
     );
@@ -293,12 +400,17 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
   AdBlockMatchResult? _lastMatch;
 
   Future<void> _addDomain({required bool allow}) async {
+    final appLocalizations = context.appLocalizations;
     final value = await globalState.showCommonDialog<String>(
       child: InputDialog(
-        title: allow ? 'Allow exact domain' : 'Block exact domain',
+        title: allow
+            ? appLocalizations.noAdAllowExactDomain
+            : appLocalizations.noAdBlockExactDomain,
         value: '',
         validator: (value) {
-          return value?.trim().isEmpty == true ? 'Domain is required' : null;
+          return value?.trim().isEmpty == true
+              ? appLocalizations.noAdDomainRequired
+              : null;
         },
       ),
     );
@@ -307,7 +419,7 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
     }
     final normalized = await coreController.normalizeAdBlockDomain(value);
     if (normalized.isEmpty) {
-      globalState.showNotifier('Invalid domain');
+      globalState.showNotifier(appLocalizations.noAdInvalidDomain);
       return;
     }
     ref.read(adBlockSettingProvider.notifier).update((state) {
@@ -318,34 +430,40 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
         blockDomains: blockDomains,
       );
     });
-    ref.read(setupActionProvider.notifier).applyProfileDebounce(
-          silence: true,
-          force: true,
-        );
+    ref
+        .read(setupActionProvider.notifier)
+        .applyProfileDebounce(silence: true, force: true);
   }
 
   Future<void> _addSuffixDomain() async {
+    final appLocalizations = context.appLocalizations;
     final value = await globalState.showCommonDialog<String>(
-      child: const InputDialog(title: 'Block domain suffix', value: ''),
+      child: InputDialog(
+        title: appLocalizations.noAdBlockDomainSuffix,
+        value: '',
+      ),
     );
     if (value == null) {
       return;
     }
     final normalized = await coreController.normalizeAdBlockDomain(value);
     if (normalized.isEmpty) {
-      globalState.showNotifier('Invalid domain suffix');
+      globalState.showNotifier(appLocalizations.noAdInvalidDomainSuffix);
       return;
     }
     final confirmed = await globalState.showMessage(
-      title: 'Confirm suffix blocking',
+      title: appLocalizations.noAdConfirmSuffixBlocking,
       message: TextSpan(
-        text: 'Block this domain and all subdomains?\n+.$normalized',
+        text:
+            '${appLocalizations.noAdConfirmSuffixBlockingDesc}\n+.$normalized',
       ),
     );
     if (confirmed != true) {
       return;
     }
-    ref.read(adBlockSettingProvider.notifier).update(
+    ref
+        .read(adBlockSettingProvider.notifier)
+        .update(
           (state) => state.copyWith(
             blockDomainSuffixes: _updatedList(
               state.blockDomainSuffixes,
@@ -354,21 +472,26 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
             ),
           ),
         );
-    ref.read(setupActionProvider.notifier).applyProfileDebounce(
-          silence: true,
-          force: true,
-        );
+    ref
+        .read(setupActionProvider.notifier)
+        .applyProfileDebounce(silence: true, force: true);
   }
 
   Future<void> _addBypassPackage() async {
+    final appLocalizations = context.appLocalizations;
     final value = await globalState.showCommonDialog<String>(
-      child: const InputDialog(title: 'Bypass app package', value: ''),
+      child: InputDialog(
+        title: appLocalizations.noAdBypassAppPackage,
+        value: '',
+      ),
     );
     final packageName = value?.trim();
     if (packageName == null || packageName.isEmpty) {
       return;
     }
-    ref.read(adBlockSettingProvider.notifier).update(
+    ref
+        .read(adBlockSettingProvider.notifier)
+        .update(
           (state) => state.copyWith(
             bypassPackages: _updatedList(
               state.bypassPackages,
@@ -377,15 +500,15 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
             ),
           ),
         );
-    ref.read(setupActionProvider.notifier).applyProfileDebounce(
-          silence: true,
-          force: true,
-        );
+    ref
+        .read(setupActionProvider.notifier)
+        .applyProfileDebounce(silence: true, force: true);
   }
 
   Future<void> _testDomain() async {
+    final appLocalizations = context.appLocalizations;
     final value = await globalState.showCommonDialog<String>(
-      child: const InputDialog(title: 'Test domain', value: ''),
+      child: InputDialog(title: appLocalizations.noAdTestDomain, value: ''),
     );
     if (value == null) {
       return;
@@ -397,14 +520,36 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
   }
 
   Future<void> _updateRemoteRules() async {
+    final appLocalizations = context.appLocalizations;
     final message = await coreController.updateExternalProvider(
       providerName: adBlockRemoteProviderName,
     );
     if (message.isNotEmpty) {
-      globalState.showNotifier(message);
+      final fallbackMessage = await coreController
+          .sideLoadAdBlockFallbackRuleProvider();
+      if (fallbackMessage.isEmpty) {
+        _recordRuleUpdate();
+        globalState.showNotifier(appLocalizations.noAdFallbackRulesLoaded);
+        return;
+      }
+      globalState.showNotifier(
+        '${appLocalizations.noAdRulesUpdateFailed}: $message',
+      );
       return;
     }
-    globalState.showNotifier('NoAd rules updated');
+    _recordRuleUpdate();
+    globalState.showNotifier(appLocalizations.noAdRulesUpdated);
+  }
+
+  void _recordRuleUpdate() {
+    ref
+        .read(adBlockSettingProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            ruleVersion: adBlockDefaultRuleVersion,
+            lastUpdateAt: DateTime.now(),
+          ),
+        );
   }
 
   List<String> _updatedList(List<String> values, String value, bool add) {
@@ -419,20 +564,21 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
     final props = ref.watch(adBlockSettingProvider);
     return ListView(
       padding: const EdgeInsets.only(bottom: 24),
       children: [
         ListHeader(
-          title: 'Rule actions',
+          title: appLocalizations.noAdRuleActions,
           actions: [
             IconButton(
-              tooltip: 'Test',
+              tooltip: appLocalizations.noAdTest,
               onPressed: _testDomain,
               icon: const Icon(Icons.search),
             ),
             IconButton(
-              tooltip: 'Update remote rules',
+              tooltip: appLocalizations.noAdUpdateRemoteRules,
               onPressed: _updateRemoteRules,
               icon: const Icon(Icons.cloud_sync_outlined),
             ),
@@ -444,50 +590,54 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
               _lastMatch!.matched ? Icons.check_circle : Icons.cancel_outlined,
             ),
             title: Text(
-              _lastMatch!.matched ? 'Matched NoAd rule' : 'No NoAd match',
+              _lastMatch!.matched
+                  ? appLocalizations.noAdMatchedNoAdRule
+                  : appLocalizations.noAdNoNoAdMatch,
             ),
             subtitle: Text(
               [
                 if (_lastMatch!.normalizedHost?.isNotEmpty == true)
                   _lastMatch!.normalizedHost!,
                 if (_lastMatch!.source?.isNotEmpty == true)
-                  'source: ${_lastMatch!.source}',
+                  '${appLocalizations.source}: ${_lastMatch!.source}',
                 if (_lastMatch!.rule?.isNotEmpty == true)
-                  'rule: ${_lastMatch!.rule}',
+                  '${appLocalizations.rule}: ${_lastMatch!.rule}',
               ].join(' · '),
             ),
           ),
         ...generateSection(
-          title: 'Manual rules',
+          title: appLocalizations.noAdManualRules,
           actions: [
             IconButton(
-              tooltip: 'Allow domain',
+              tooltip: appLocalizations.noAdAllowDomain,
               onPressed: () => _addDomain(allow: true),
               icon: const Icon(Icons.verified_user_outlined),
             ),
             IconButton(
-              tooltip: 'Block domain',
+              tooltip: appLocalizations.noAdBlockDomain,
               onPressed: () => _addDomain(allow: false),
               icon: const Icon(Icons.block),
             ),
             IconButton(
-              tooltip: 'Block suffix',
+              tooltip: appLocalizations.noAdBlockSuffix,
               onPressed: _addSuffixDomain,
               icon: const Icon(Icons.account_tree_outlined),
             ),
             IconButton(
-              tooltip: 'Bypass app',
+              tooltip: appLocalizations.noAdBypassApp,
               onPressed: _addBypassPackage,
               icon: const Icon(Icons.apps_outlined),
             ),
           ],
           items: [
             _DomainListItem(
-              title: 'Allowed exact domains',
+              title: appLocalizations.noAdAllowedExactDomains,
               values: props.allowDomains,
-              emptyText: 'No allowlist domains',
+              emptyText: appLocalizations.noAdNoAllowlistDomains,
               onRemove: (value) {
-                ref.read(adBlockSettingProvider.notifier).update(
+                ref
+                    .read(adBlockSettingProvider.notifier)
+                    .update(
                       (state) => state.copyWith(
                         allowDomains: _updatedList(
                           state.allowDomains,
@@ -496,18 +646,19 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
                         ),
                       ),
                     );
-                ref.read(setupActionProvider.notifier).applyProfileDebounce(
-                      silence: true,
-                      force: true,
-                    );
+                ref
+                    .read(setupActionProvider.notifier)
+                    .applyProfileDebounce(silence: true, force: true);
               },
             ),
             _DomainListItem(
-              title: 'Blocked exact domains',
+              title: appLocalizations.noAdBlockedExactDomains,
               values: props.blockDomains,
-              emptyText: 'No manual block domains',
+              emptyText: appLocalizations.noAdNoManualBlockDomains,
               onRemove: (value) {
-                ref.read(adBlockSettingProvider.notifier).update(
+                ref
+                    .read(adBlockSettingProvider.notifier)
+                    .update(
                       (state) => state.copyWith(
                         blockDomains: _updatedList(
                           state.blockDomains,
@@ -516,19 +667,20 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
                         ),
                       ),
                     );
-                ref.read(setupActionProvider.notifier).applyProfileDebounce(
-                      silence: true,
-                      force: true,
-                    );
+                ref
+                    .read(setupActionProvider.notifier)
+                    .applyProfileDebounce(silence: true, force: true);
               },
             ),
             _DomainListItem(
-              title: 'Blocked domain suffixes',
+              title: appLocalizations.noAdBlockedDomainSuffixes,
               values: props.blockDomainSuffixes,
-              emptyText: 'No suffix block domains',
+              emptyText: appLocalizations.noAdNoSuffixBlockDomains,
               valuePrefix: '+.',
               onRemove: (value) {
-                ref.read(adBlockSettingProvider.notifier).update(
+                ref
+                    .read(adBlockSettingProvider.notifier)
+                    .update(
                       (state) => state.copyWith(
                         blockDomainSuffixes: _updatedList(
                           state.blockDomainSuffixes,
@@ -537,18 +689,19 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
                         ),
                       ),
                     );
-                ref.read(setupActionProvider.notifier).applyProfileDebounce(
-                      silence: true,
-                      force: true,
-                    );
+                ref
+                    .read(setupActionProvider.notifier)
+                    .applyProfileDebounce(silence: true, force: true);
               },
             ),
             _DomainListItem(
-              title: 'Bypassed app packages',
+              title: appLocalizations.noAdBypassedAppPackages,
               values: props.bypassPackages,
-              emptyText: 'No bypassed apps',
+              emptyText: appLocalizations.noAdNoBypassedApps,
               onRemove: (value) {
-                ref.read(adBlockSettingProvider.notifier).update(
+                ref
+                    .read(adBlockSettingProvider.notifier)
+                    .update(
                       (state) => state.copyWith(
                         bypassPackages: _updatedList(
                           state.bypassPackages,
@@ -557,10 +710,9 @@ class _NoAdRulesTabState extends ConsumerState<_NoAdRulesTab> {
                         ),
                       ),
                     );
-                ref.read(setupActionProvider.notifier).applyProfileDebounce(
-                      silence: true,
-                      force: true,
-                    );
+                ref
+                    .read(setupActionProvider.notifier)
+                    .applyProfileDebounce(silence: true, force: true);
               },
             ),
           ],
@@ -598,6 +750,7 @@ class _AdBlockEventItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
     final destination = [
       if (event.destinationIp?.isNotEmpty == true) event.destinationIp,
       if (event.destinationPort != null) '${event.destinationPort}',
@@ -611,7 +764,7 @@ class _AdBlockEventItem extends StatelessWidget {
     return ListItem(
       leading: const Icon(Icons.block),
       title: Text(
-        event.host.isEmpty ? '<unknown host>' : event.host,
+        event.host.isEmpty ? appLocalizations.noAdUnknownHost : event.host,
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(details, overflow: TextOverflow.ellipsis),
@@ -642,6 +795,7 @@ class _DomainListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = context.appLocalizations;
     final subtitle = values.isEmpty
         ? emptyText
         : values.map((value) => '$valuePrefix$value').join('\n');
@@ -657,7 +811,9 @@ class _DomainListItem extends StatelessWidget {
                   for (final value in values)
                     PopupMenuItem(
                       value: value,
-                      child: Text('Remove $valuePrefix$value'),
+                      child: Text(
+                        '${appLocalizations.remove} $valuePrefix$value',
+                      ),
                     ),
                 ];
               },

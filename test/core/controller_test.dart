@@ -192,6 +192,81 @@ void main() {
       final result = await controller.getExternalProvider('test');
       expect(result, isNull);
     });
+
+    test('sideLoadExternalProviderBytes sends base64 data', () async {
+      when(
+        () => mock.sideLoadExternalProvider(
+          providerName: 'rules',
+          data: '',
+          dataBase64: 'AAH/',
+        ),
+      ).thenAnswer((_) async => '');
+
+      final result = await controller.sideLoadExternalProviderBytes(
+        providerName: 'rules',
+        bytes: [0, 1, 255],
+      );
+
+      expect(result, '');
+      verify(
+        () => mock.sideLoadExternalProvider(
+          providerName: 'rules',
+          data: '',
+          dataBase64: 'AAH/',
+        ),
+      ).called(1);
+    });
+  });
+
+  group('ad block methods', () {
+    test('getAdBlockSnapshot delegates and returns snapshot', () async {
+      const snapshot = AdBlockSnapshot(totalBlocked: 2, sessionBlocked: 1);
+      when(() => mock.getAdBlockSnapshot()).thenAnswer((_) async => snapshot);
+
+      final result = await controller.getAdBlockSnapshot();
+
+      expect(result.totalBlocked, 2);
+      expect(result.sessionBlocked, 1);
+    });
+
+    test('clearAdBlockEvents delegates', () async {
+      when(() => mock.clearAdBlockEvents()).thenAnswer((_) async => true);
+
+      final result = await controller.clearAdBlockEvents();
+
+      expect(result, true);
+      verify(() => mock.clearAdBlockEvents()).called(1);
+    });
+
+    test('normalizeAdBlockDomain delegates', () async {
+      when(
+        () => mock.normalizeAdBlockDomain('HTTP://Example.COM/path'),
+      ).thenAnswer((_) async => 'example.com');
+
+      final result = await controller.normalizeAdBlockDomain(
+        'HTTP://Example.COM/path',
+      );
+
+      expect(result, 'example.com');
+    });
+
+    test('matchAdBlockDomain delegates', () async {
+      const match = AdBlockMatchResult(
+        matched: true,
+        source: 'anti-ad',
+        rule: '__noad_anti_ad',
+        normalizedHost: 'ads.example.com',
+      );
+      when(
+        () => mock.matchAdBlockDomain('ads.example.com'),
+      ).thenAnswer((_) async => match);
+
+      final result = await controller.matchAdBlockDomain('ads.example.com');
+
+      expect(result.matched, true);
+      expect(result.source, 'anti-ad');
+      expect(result.normalizedHost, 'ads.example.com');
+    });
   });
 
   group('traffic methods', () {
