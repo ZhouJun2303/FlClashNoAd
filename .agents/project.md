@@ -1,11 +1,12 @@
 # Project Context
 
-FlClash is a multi-platform proxy client based on ClashMeta (mihomo), built with Flutter. It supports Android, Windows, macOS, and Linux, using a Material You design with Surfboard-like UI.
+NoAd is an Android-first ad-blocking client based on FlClash and ClashMeta (mihomo), built with Flutter. The source tree retains the upstream Windows, macOS, and Linux implementations, while the NoAd release workflow currently targets Android.
 
 ## Version Notes
 
-- `.fvmrc` pins Flutter 3.35.7 for local development.
-- CI uses Flutter 3.41.9. These may diverge; trust CI as the source of truth for release builds.
+- `.fvmrc` pins Flutter 3.44.4 for local development.
+- CI and the Android release workflow use Flutter 3.44.4.
+- Android release builds use Go 1.26.4, JDK 21, Android SDK platform 36, Android Build Tools 36.0.0, and Android NDK 28.2.13676358 (r28c).
 - Dart SDK constraint: `>=3.8.0 <4.0.0`.
 
 ## Build Dependencies

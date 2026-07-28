@@ -1,7 +1,7 @@
 name: fl_clash
-description: A multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free.
+description: An Android-first ad-blocking client based on FlClash and ClashMeta.
 publish_to: 'none'
-version: 0.8.94+2026071102
+version: 0.9.0+2026072801
 environment:
   sdk: '>=3.8.0 <4.0.0'
 

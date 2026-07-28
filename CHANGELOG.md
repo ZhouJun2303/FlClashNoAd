@@ -1,3 +1,19 @@
+## v0.9.0
+
+- Launch the Android-first NoAd client with package ID `com.follow.clash.noad`
+
+- Add anti-AD Mihomo rule injection with remote updates and a bundled offline fallback
+
+- Add exact allow/block domains, suffix blocking, Android app bypass, and domain matching tools
+
+- Add in-memory blocked-event history, filtering, local diagnostic export, and privacy safeguards
+
+- Keep NoAd blocking active across Rule, Global, and Direct logical modes
+
+- Add English, Simplified Chinese, Japanese, and Russian NoAd localization
+
+- Add Android verification, signed APK release, checksums, and GPL source archive automation
+
 ## v0.8.94
 
 - Fix macos performance issue
