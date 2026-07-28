@@ -60,7 +60,7 @@ NoAd 是一个基于 [FLClash](https://github.com/chen08209/FlClash) 与 Mihomo 
 
    ```bash
    cd core
-   go test .
+   CGO_ENABLED=0 go test .
    ```
 
 5. 构建 Android APK：

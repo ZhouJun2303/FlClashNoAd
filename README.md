@@ -60,7 +60,7 @@ NoAd is an Android-first ad-blocking client based on [FLClash](https://github.co
 
    ```bash
    cd core
-   go test .
+   CGO_ENABLED=0 go test .
    ```
 
 5. Build Android APKs:

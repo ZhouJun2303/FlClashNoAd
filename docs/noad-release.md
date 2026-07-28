@@ -26,7 +26,7 @@ flutter test --reporter expanded
 Run the Go core tests from `core/`:
 
 ```bash
-go test .
+CGO_ENABLED=0 go test .
 ```
 
 Build Android release artifacts from the repository root:
