@@ -104,6 +104,28 @@ void main() {
       expect(jsonDecode(jsonEncode(config)), first);
     });
 
+    test('replaces managed bypass rules when settings change', () {
+      final config = _withInjection(
+        props: const AdBlockProps(bypassPackages: ['com.example.old']),
+        rawConfig: {'rules': ['DOMAIN,example.com,DIRECT']},
+      );
+
+      injectAdBlockConfig(config);
+      config[adBlockInternalConfigKey] = {
+        ...const AdBlockProps(
+          bypassPackages: ['com.example.new'],
+        ).toJson(),
+        'remoteRulePath': 'providers/noad/anti-ad.mrs',
+        'logicalMode': Mode.rule.name,
+      };
+      injectAdBlockConfig(config);
+
+      expect(config['rules'], [
+        'PROCESS-NAME,com.example.new,PASS-RULE',
+        _remoteRejectRule,
+        'DOMAIN,example.com,DIRECT',
+      ]);
+    });
 
     test('remote provider includes offline fallback path and update interval', () {
       final config = _withInjection(
@@ -187,6 +209,8 @@ void main() {
     });
   });
 }
+
+const _remoteRejectRule = 'RULE-SET,$adBlockRemoteProviderName,REJECT';
 
 Map<String, dynamic> _withInjection({
   AdBlockProps props = const AdBlockProps(),

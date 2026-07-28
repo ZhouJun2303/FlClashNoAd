@@ -12,6 +12,7 @@ const adBlockFallbackRuleAssetPath = 'assets/data/noad/anti-ad.mrs';
 const adBlockFallbackLicenseAssetPath = 'assets/data/noad/ANTI_AD_LICENSE.txt';
 const adBlockDefaultRuleVersion = 'anti-ad:mihomo.mrs';
 const adBlockRuleUpdateIntervalSeconds = 24 * 60 * 60;
+const _adBlockRemoteRejectRule = 'RULE-SET,$adBlockRemoteProviderName,REJECT';
 
 const _reservedRuleProviders = {
   adBlockRemoteProviderName,
@@ -97,7 +98,7 @@ void injectAdBlockConfig(Map<String, dynamic> rawConfig) {
     if (allowPayload.isNotEmpty) 'RULE-SET,$adBlockAllowProviderName,PASS-RULE',
     if (localBlockPayload.isNotEmpty)
       'RULE-SET,$adBlockLocalBlockProviderName,REJECT',
-    'RULE-SET,$adBlockRemoteProviderName,REJECT',
+    _adBlockRemoteRejectRule,
   ];
 
   rawConfig['mode'] = Mode.rule.name;
@@ -118,9 +119,14 @@ void _removeReservedNoAdConfig(Map<String, dynamic> rawConfig) {
       rawConfig.remove('rule-providers');
     }
   }
-  rawConfig['rules'] = _rules(
-    rawConfig['rules'],
-  ).where((rule) => !_isReservedNoAdRule(rule)).toList();
+  final rules = _rules(rawConfig['rules']);
+  final managedPrefixEnd = rules.indexOf(_adBlockRemoteRejectRule);
+  final userRules = managedPrefixEnd == -1
+      ? rules
+      : rules.sublist(managedPrefixEnd + 1);
+  rawConfig['rules'] = userRules
+      .where((rule) => !_isReservedNoAdRule(rule))
+      .toList();
 }
 
 Map _ensureMap(Map<String, dynamic> rawConfig, String key) {
