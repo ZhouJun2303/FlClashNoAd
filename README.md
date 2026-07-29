@@ -69,6 +69,8 @@ NoAd is an Android-first ad-blocking client based on [FLClash](https://github.co
    dart setup.dart android --env stable -v
    ```
 
+For the tested Windows, Android Studio, FVM, and troubleshooting workflow, see [docs/windows-android-build.md](docs/windows-android-build.md).
+
 ## Release and validation
 
 Release details, required GitHub Secrets, SHA256/source package expectations, and external real-device validation items are documented in [docs/noad-release.md](docs/noad-release.md).

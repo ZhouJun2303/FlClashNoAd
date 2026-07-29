@@ -45,7 +45,8 @@ app.*.map.json
 .claude/settings.local.json
 
 # Documentation (generated/planning artifacts)
-docs/
+docs/*
+!docs/windows-android-build.md
 
 
 # Android Studio will place build artifacts here

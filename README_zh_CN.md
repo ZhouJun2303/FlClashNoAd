@@ -69,6 +69,8 @@ NoAd 是一个基于 [FLClash](https://github.com/chen08209/FlClash) 与 Mihomo 
    dart setup.dart android --env stable -v
    ```
 
+Windows、Android Studio、FVM 的已验证配置和常见故障处理见 [docs/windows-android-build.md](docs/windows-android-build.md)。
+
 ## 发布与验证
 
 Release 流程、GitHub Secrets、SHA256/源码包要求，以及需要真机或凭据的外部验收项见 [docs/noad-release.md](docs/noad-release.md)。
